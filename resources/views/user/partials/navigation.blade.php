@@ -320,7 +320,7 @@
 
                 <!-- Blog Link -->
                 <li class="border-b border-gray-100">
-                    <a href="#" class="block py-3 text-gray-800 font-medium">Blogsss</a>
+                    <a href="#" class="block py-3 text-gray-800 font-medium">Blog</a>
                 </li>
             </ul>
 

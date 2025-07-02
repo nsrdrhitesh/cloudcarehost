@@ -4,7 +4,7 @@
         <div class="container max-w-screen-xl mx-auto mx-auto mx-auto px-4 flex flex-col lg:flex-row items-center">
             <div class="lg:w-1/2 mb-12 lg:mb-0 text-center lg:text-left animate__animated animate__fadeInDown">
                 <h1 class="text-4xl md:text-5xl font-bold font-montserrat text-gray-900 mb-6 leading-tight">Powerful
-                    Hosting for Your Website</h1>
+                    Hosting hitesh for Your Website</h1>
                 <p class="text-lg text-gray-600 mb-8 animate__animated animate__fadeInDown animate__delay-1s">Get your
                     domain and hosting in one place with 99.9% uptime guarantee</p>
 
