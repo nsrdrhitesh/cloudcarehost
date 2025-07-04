@@ -2,17 +2,22 @@
     <div class="container max-w-screen-xl mx-auto mx-auto mx-auto px-4 py-20">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             <div class="mb-8">
-                <h3 class="text-xl font-bold font-montserrat mb-5">Hosting</h3>
+                <h3 href="{{ route('hosting.index') }}" class="text-xl font-bold font-montserrat mb-5">Hosting</h3>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Shared
+                    <li><a href="{{ route('hosting.shared') }}"
+                            class="text-gray-300 hover:text-white transition-colors hover:pl-1">Shared
                             Hosting</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">WordPress
+                    <li><a href="{{ route('hosting.wordpress') }}"
+                            class="text-gray-300 hover:text-white transition-colors hover:pl-1">WordPress
                             Hosting</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Cloud
+                    <li><a href="{{ route('hosting.cloud') }}"
+                            class="text-gray-300 hover:text-white transition-colors hover:pl-1">Cloud
                             Hosting</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">VPS Hosting</a>
+                    <li><a href="{{ route('hosting.vps') }}"
+                            class="text-gray-300 hover:text-white transition-colors hover:pl-1">VPS Hosting</a>
                     </li>
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Dedicated
+                    <li><a href="{{ route('hosting.dedicated') }}"
+                            class="text-gray-300 hover:text-white transition-colors hover:pl-1">Dedicated
                             Servers</a></li>
                 </ul>
             </div>
@@ -99,9 +104,15 @@
             <div class="text-gray-500 text-sm">&copy; {{ date('Y') }} Cloud Care Host. All Rights Reserved.</div>
 
             <div class="flex gap-5">
-                <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">Terms of Service</a>
-                <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">Privacy Policy</a>
-                <a href="#" class="text-gray-500 hover:text-white text-sm transition-colors">Sitemap</a>
+                <div class="flex gap-5">
+                    <a href="{{ route('terms') }}"
+                        class="text-gray-500 hover:text-white text-sm transition-colors">Terms of Service</a>
+                    <!-- Other links... -->
+                </div>
+                <a href="{{ route('privacy.policy') }}"
+                    class="text-gray-500 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                <a href="{{ route('sitemap') }}"
+                    class="text-gray-500 hover:text-white text-sm transition-colors">Sitemap</a>
             </div>
 
             <div class="flex gap-4 text-gray-500 text-2xl">

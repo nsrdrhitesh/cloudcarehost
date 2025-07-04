@@ -26,43 +26,15 @@
 
             <!-- Desktop Navigation with Dropdowns -->
             <ul class="hidden md:flex gap-6 items-center">
-                <!-- Hosting Dropdown -->
-                <li class="relative group">
-                    <button
-                        class="flex items-center text-gray-800 hover:text-indigo-600 font-medium transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all group-hover:after:w-full">
-                        Hosting <i
-                            class="fas fa-chevron-down ml-1 text-xs transition-transform group-hover:rotate-180"></i>
-                    </button>
-                    <div
-                        class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                        <div class="py-1">
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Shared
-                                Hosting</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">VPS
-                                Hosting</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Dedicated
-                                Servers</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Cloud
-                                Hosting</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Compare
-                                Plans</a>
-                        </div>
-                    </div>
-                </li>
 
                 <!-- Domains Dropdown -->
                 <li class="relative group">
                     <button
                         class="flex items-center text-gray-800 hover:text-indigo-600 font-medium transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all group-hover:after:w-full">
-                        Domains <i
-                            class="fas fa-chevron-down ml-1 text-xs transition-transform group-hover:rotate-180"></i>
+                        Domain
+                        <!-- <i class="fas fa-chevron-down ml-1 text-xs transition-transform group-hover:rotate-180"></i> -->
                     </button>
-                    <div
+                    <!-- <div
                         class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                         <div class="py-1">
                             <a href="#"
@@ -81,114 +53,186 @@
                                 class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Free
                                 Domain</a>
                         </div>
-                    </div>
+                    </div> -->
                 </li>
 
-                <!-- WordPress Dropdown -->
+                <!-- Hosting Dropdown -->
                 <li class="relative group">
                     <button
                         class="flex items-center text-gray-800 hover:text-indigo-600 font-medium transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all group-hover:after:w-full">
-                        WordPress <i
+                        Cloud Hosting <i
                             class="fas fa-chevron-down ml-1 text-xs transition-transform group-hover:rotate-180"></i>
                     </button>
                     <div
-                        class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                        <div class="py-1">
+                        class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                        <div class="py-2">
+                            <!-- Shared Hosting -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">WordPress
-                                Hosting</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fas fa-server text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">Shared Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Perfect for small websites and blogs</div>
+                                </div>
+                            </a>
+
+                            <!-- WordPress Hosting -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Managed
-                                WordPress</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fab fa-wordpress text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">WordPress Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Optimized for WordPress performance</div>
+                                </div>
+                            </a>
+
+                            <!-- VPS Hosting -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">WordPress
-                                Migration</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fas fa-cloud text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">VPS Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Dedicated resources for growing sites</div>
+                                </div>
+                            </a>
+
+                            <!-- Dedicated Hosting -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">WordPress
-                                Tools</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fas fa-tachometer-alt text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">Dedicated Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Full server control for high traffic</div>
+                                </div>
+                            </a>
+
+                            <!-- Divider -->
+                            <div class="border-t border-gray-100 my-1"></div>
+
+                            <!-- Compare Plans -->
+                            <a href="#"
+                                class="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 transition-colors text-sm font-medium">
+                                <i class="fas fa-chart-bar mr-2"></i>
+                                Compare All Hosting Plans
+                            </a>
                         </div>
                     </div>
                 </li>
 
-                <!-- Email Dropdown -->
+
+
+                <!-- Business Solution Dropdown -->
                 <li class="relative group">
                     <button
                         class="flex items-center text-gray-800 hover:text-indigo-600 font-medium transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all group-hover:after:w-full">
-                        Email <i
+                        Business Solution <i
                             class="fas fa-chevron-down ml-1 text-xs transition-transform group-hover:rotate-180"></i>
                     </button>
                     <div
-                        class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                        <div class="py-1">
+                        class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                        <div class="py-2">
+                            <!-- WooCommerce Hosting -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Business
-                                Email</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fab fa-wordpress-simple text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">WooCommerce Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Optimized for online stores</div>
+                                </div>
+                            </a>
+
+                            <!-- Reseller Hosting -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Email
-                                Hosting</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fas fa-users text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">Reseller Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Start your own hosting business</div>
+                                </div>
+                            </a>
+
+                            <!-- Divider -->
+                            <div class="border-t border-gray-100 my-1"></div>
+
+                            <!-- Business Solutions Page -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Microsoft
-                                365</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Google
-                                Workspace</a>
+                                class="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 transition-colors text-sm font-medium">
+                                <i class="fas fa-briefcase mr-2"></i>
+                                Explore All Business Solutions
+                            </a>
                         </div>
                     </div>
                 </li>
 
-                <!-- Support Dropdown -->
+                <!-- Help & Resources Dropdown -->
                 <li class="relative group">
                     <button
                         class="flex items-center text-gray-800 hover:text-indigo-600 font-medium transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all group-hover:after:w-full">
-                        Support <i
+                        Help & Resources <i
                             class="fas fa-chevron-down ml-1 text-xs transition-transform group-hover:rotate-180"></i>
                     </button>
                     <div
-                        class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                        <div class="py-1">
+                        class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
+                        <div class="py-2">
+                            <!-- Knowledgebase -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Help
-                                Center</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fas fa-book text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">Knowledgebase</div>
+                                    <div class="text-xs text-gray-500 mt-1">Guides, tutorials and FAQs</div>
+                                </div>
+                            </a>
+
+                            <!-- Contact Us -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Knowledge
-                                Base</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fas fa-headset text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">Contact Us</div>
+                                    <div class="text-xs text-gray-500 mt-1">24/7 expert support</div>
+                                </div>
+                            </a>
+
+                            <!-- Blog -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">System
-                                Status</a>
+                                class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
+                                <div class="mr-3 mt-0.5 text-indigo-500">
+                                    <i class="fas fa-newspaper text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium group-hover:text-indigo-600">Blog</div>
+                                    <div class="text-xs text-gray-500 mt-1">Latest news and tips</div>
+                                </div>
+                            </a>
+
+                            <!-- Divider -->
+                            <div class="border-t border-gray-100 my-1"></div>
+
+                            <!-- System Status -->
                             <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Contact
-                                Support</a>
+                                class="flex items-center px-4 py-2 text-indigo-600 hover:bg-indigo-50 transition-colors text-sm font-medium">
+                                <i class="fas fa-server mr-2"></i>
+                                System Status
+                            </a>
                         </div>
                     </div>
-                </li>
-
-                <!-- About Dropdown -->
-                <li class="relative group">
-                    <button
-                        class="flex items-center text-gray-800 hover:text-indigo-600 font-medium transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all group-hover:after:w-full">
-                        About <i
-                            class="fas fa-chevron-down ml-1 text-xs transition-transform group-hover:rotate-180"></i>
-                    </button>
-                    <div
-                        class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
-                        <div class="py-1">
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Our
-                                Company</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Careers</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Press</a>
-                            <a href="#"
-                                class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">Blog</a>
-                        </div>
-                    </div>
-                </li>
-
-                <!-- Blog Link -->
-                <li>
-                    <a href="#"
-                        class="text-gray-800 hover:text-indigo-600 font-medium transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-indigo-600 after:transition-all hover:after:w-full">Blog</a>
                 </li>
             </ul>
 
@@ -222,105 +266,137 @@
         <div class="container mx-auto px-4">
             <!-- Mobile Navigation with Accordion -->
             <ul class="flex flex-col gap-1">
-                <!-- Hosting Accordion -->
-                <li class="border-b border-gray-100">
-                    <button class="w-full flex justify-between items-center py-3 text-gray-800 font-medium"
-                        onclick="toggleMobileDropdown('hosting-dropdown')">
-                        <span>Hosting</span>
-                        <i class="fas fa-chevron-down text-xs transition-transform" id="hosting-chevron"></i>
-                    </button>
-                    <ul class="pl-4 hidden" id="hosting-dropdown">
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Shared Hosting</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">VPS Hosting</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Dedicated Servers</a>
-                        </li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Cloud Hosting</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Compare Plans</a></li>
-                    </ul>
-                </li>
 
                 <!-- Domains Accordion -->
                 <li class="border-b border-gray-100">
                     <button class="w-full flex justify-between items-center py-3 text-gray-800 font-medium"
                         onclick="toggleMobileDropdown('domains-dropdown')">
                         <span>Domains</span>
-                        <i class="fas fa-chevron-down text-xs transition-transform" id="domains-chevron"></i>
+                        <!-- <i class="fas fa-chevron-down text-xs transition-transform" id="domains-chevron"></i> -->
                     </button>
-                    <ul class="pl-4 hidden" id="domains-dropdown">
+                    <!-- <ul class="pl-4 hidden" id="domains-dropdown">
                         <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Domain Search</a></li>
                         <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Domain Transfer</a></li>
                         <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">WHOIS Lookup</a></li>
                         <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Domain Pricing</a></li>
                         <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Free Domain</a></li>
-                    </ul>
+                    </ul> -->
                 </li>
 
-                <!-- WordPress Accordion -->
+                <!-- Hosting Accordion -->
                 <li class="border-b border-gray-100">
                     <button class="w-full flex justify-between items-center py-3 text-gray-800 font-medium"
-                        onclick="toggleMobileDropdown('wordpress-dropdown')">
-                        <span>WordPress</span>
-                        <i class="fas fa-chevron-down text-xs transition-transform" id="wordpress-chevron"></i>
+                        onclick="toggleMobileDropdown('hosting-dropdown')">
+                        <span>Cloud Hosting</span>
+                        <i class="fas fa-chevron-down text-xs transition-transform" id="hosting-chevron"></i>
                     </button>
-                    <ul class="pl-4 hidden" id="wordpress-dropdown">
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">WordPress Hosting</a>
+                    <ul class="pl-4 hidden" id="hosting-dropdown">
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fas fa-server text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>Shared Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Perfect for small websites</div>
+                                </div>
+                            </a>
                         </li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Managed WordPress</a>
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fab fa-wordpress text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>WordPress Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Optimized for WordPress</div>
+                                </div>
+                            </a>
                         </li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">WordPress Migration</a>
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fas fa-cloud text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>VPS Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Dedicated resources</div>
+                                </div>
+                            </a>
                         </li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">WordPress Tools</a></li>
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fas fa-tachometer-alt text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>Dedicated Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Full server control</div>
+                                </div>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
-                <!-- Email Accordion -->
+
+
+                <!-- Business Solution Accordion -->
                 <li class="border-b border-gray-100">
                     <button class="w-full flex justify-between items-center py-3 text-gray-800 font-medium"
-                        onclick="toggleMobileDropdown('email-dropdown')">
-                        <span>Email</span>
-                        <i class="fas fa-chevron-down text-xs transition-transform" id="email-chevron"></i>
+                        onclick="toggleMobileDropdown('business-dropdown')">
+                        <span>Business Solution</span>
+                        <i class="fas fa-chevron-down text-xs transition-transform" id="business-chevron"></i>
                     </button>
-                    <ul class="pl-4 hidden" id="email-dropdown">
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Business Email</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Email Hosting</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Microsoft 365</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Google Workspace</a></li>
+                    <ul class="pl-4 hidden" id="business-dropdown">
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fab fa-wordpress-simple text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>WooCommerce Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Optimized for online stores</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fas fa-users text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>Reseller Hosting</div>
+                                    <div class="text-xs text-gray-500 mt-1">Start your hosting business</div>
+                                </div>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 
-                <!-- Support Accordion -->
+                <!-- Help & Resources Accordion -->
                 <li class="border-b border-gray-100">
                     <button class="w-full flex justify-between items-center py-3 text-gray-800 font-medium"
-                        onclick="toggleMobileDropdown('support-dropdown')">
-                        <span>Support</span>
-                        <i class="fas fa-chevron-down text-xs transition-transform" id="support-chevron"></i>
+                        onclick="toggleMobileDropdown('help-dropdown')">
+                        <span>Help & Resources</span>
+                        <i class="fas fa-chevron-down text-xs transition-transform" id="help-chevron"></i>
                     </button>
-                    <ul class="pl-4 hidden" id="support-dropdown">
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Help Center</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Knowledge Base</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">System Status</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Contact Support</a></li>
+                    <ul class="pl-4 hidden" id="help-dropdown">
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fas fa-book text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>Knowledgebase</div>
+                                    <div class="text-xs text-gray-500 mt-1">Guides and tutorials</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fas fa-headset text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>Contact Us</div>
+                                    <div class="text-xs text-gray-500 mt-1">24/7 support</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                                <i class="fas fa-newspaper text-indigo-500 mt-1 mr-3 w-4"></i>
+                                <div>
+                                    <div>Blog</div>
+                                    <div class="text-xs text-gray-500 mt-1">News and tips</div>
+                                </div>
+                            </a>
+                        </li>
                     </ul>
-                </li>
-
-                <!-- About Accordion -->
-                <li class="border-b border-gray-100">
-                    <button class="w-full flex justify-between items-center py-3 text-gray-800 font-medium"
-                        onclick="toggleMobileDropdown('about-dropdown')">
-                        <span>About</span>
-                        <i class="fas fa-chevron-down text-xs transition-transform" id="about-chevron"></i>
-                    </button>
-                    <ul class="pl-4 hidden" id="about-dropdown">
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Our Company</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Careers</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Press</a></li>
-                        <li><a href="#" class="block py-2 text-gray-600 hover:text-indigo-600">Blog</a></li>
-                    </ul>
-                </li>
-
-                <!-- Blog Link -->
-                <li class="border-b border-gray-100">
-                    <a href="#" class="block py-3 text-gray-800 font-medium">Blog</a>
                 </li>
             </ul>
 

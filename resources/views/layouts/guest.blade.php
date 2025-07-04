@@ -47,7 +47,6 @@
             font-family: 'Montserrat', sans-serif;
         }
     </style>
-
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
