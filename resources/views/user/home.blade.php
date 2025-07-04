@@ -116,8 +116,8 @@
                 <div
                     class="plan-card bg-white border border-gray-200 rounded-xl p-8 relative hover:shadow-lg transition-all">
                     <div class="mb-8 text-center">
-                        <h3 class="text-2xl font-bold mb-1">Shared Starter</h3>
-                        <p class="text-gray-500">The ideal starting point into shared hosting!</p>
+                        <h3 class="text-2xl font-bold mb-1">Shared hosting</h3>
+                        <p class="text-gray-500">Shared Starter</p>
                     </div>
                     <div class="text-center mb-4">
                         <span class="price text-4xl font-bold">$2.99</span>
@@ -129,23 +129,23 @@
                     </button>
                     <ul class="space-y-3 mb-8">
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 1 website</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Managed hosting
-                            for WordPress</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free 7-day
-                            Horizons trial</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 10 GB SSD
-                            storage</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Hostinger
-                            Website Builder</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free domain
-                            (₹749.00 value)</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free automatic
-                            website migration</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 1 mailbox -
-                            free for 1 year</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Unlimited free
-                            SSL</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Weekly backups
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 1 core cpu 1 GB
+                            RAM</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 3 email
+                            accounts</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 50 GB storage
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 100GB Bandwidth
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 2,00,000 Inode
+                            Limit</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Daily Backups /
+                            Jetbackup</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 99.9% Uptime
+                            Guarantee</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free 30-Days
+                            Money-Back</li>
+                        <!-- <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Weekly backups
                         </li>
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> WooCommerce
                         </li>
@@ -155,7 +155,7 @@
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Dedicated IP
                             address</li>
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Priority
-                            support</li>
+                            support</li> -->
                     </ul>
 
                 </div>
@@ -167,34 +167,34 @@
                         class="absolute top-0 right-6 -translate-y-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
                         Most Popular</div>
                     <div class="mb-8 text-center">
-                        <h3 class="text-2xl font-bold mb-1">Business</h3>
-                        <p class="text-gray-500">Perfect for growing businesses</p>
+                        <h3 class="text-2xl font-bold mb-1">VPS</h3>
+                        <p class="text-gray-500">CloudCare Micro</p>
                     </div>
                     <div class="text-center mb-4">
-                        <span class="price text-4xl font-bold">$5.99</span>
+                        <span class="price text-4xl font-bold">$5.20</span>
                         <span class="period text-gray-500">/month</span>
                     </div>
                     <button
                         class="w-full mb-4 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors">Select
                         Plan</button>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 25 websites
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 1 CPU Core
                         </li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Managed hosting
-                            for WordPress</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free 7-day
-                            Horizons trial</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 25 GB SSD
-                            storage</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Hostinger
-                            Website Builder</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free domain
-                            (₹749.00 value)</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free automatic
-                            website migration</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 2 mailboxes per
-                            website - free for 1 year</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Unlimited free
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 1 GB RAM DDR5
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 30 GB NVMe SSD
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Full Root and
+                            Console Access</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Multiple OS
+                            Choice</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 1 IPv4
+                            Dedicated IP</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 24*7 support
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free 30-Days
+                            Money-Back</li>
+                        <!-- <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Unlimited free
                             SSL</li>
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Weekly backups
                         </li>
@@ -206,7 +206,7 @@
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Dedicated IP
                             address</li>
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Priority
-                            support</li>
+                            support</li> -->
                     </ul>
 
                 </div>
@@ -215,32 +215,33 @@
                 <div
                     class="plan-card bg-white border border-gray-200 rounded-xl p-8 relative hover:shadow-lg transition-all">
                     <div class="mb-8 text-center">
-                        <h3 class="text-2xl font-bold mb-1">Cloud Startup</h3>
-                        <p class="text-gray-500">Enjoy optimised performance & guaranteed resources.</p>
+                        <h3 class="text-2xl font-bold mb-1">Dedicated</h3>
+                        <p class="text-gray-500">CloudCore</p>
                     </div>
                     <div class="text-center mb-4">
-                        <span class="price text-4xl font-bold">$12.99</span>
+                        <span class="price text-4xl font-bold">$74.80</span>
                         <span class="period text-gray-500">/month</span>
                     </div>
                     <button
                         class="w-full mb-4 py-3 border-2 border-indigo-600 text-indigo-600 font-medium rounded-lg hover:bg-indigo-600 hover:text-white transition-colors">Select
                         Plan</button>
                     <ul class="space-y-3 mb-8">
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 100 websites
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> CPU - 4 Cores /
+                            8 Threads
                         </li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Managed hosting
-                            for WordPress</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free 7-day
-                            Horizons trial</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 100 GB NVMe
-                            storage</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Hostinger
-                            Website Builder</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free domain
-                            (₹749.00 value)</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Free automatic
-                            website migration</li>
-                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 10 mailboxes
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Intel Xeon E3 /
+                            Core i7</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 1x 480 GB SSD
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 16 GB RAM DDR5
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> IP Addresses -
+                            1 IPv4</li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Managed Server
+                        </li>
+                        <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Unlimited
+                            Bandwidth</li>
+                        <!-- <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> 10 mailboxes
                             per website per year</li>
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Unlimited free
                             SSL</li>
@@ -254,7 +255,7 @@
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Dedicated IP
                             address</li>
                         <li class="flex items-center"><i class="fas fa-check text-emerald-500 mr-2"></i> Priority
-                            support</li>
+                            support</li> -->
                     </ul>
 
                 </div>
@@ -274,8 +275,8 @@
             // Define monthly and yearly prices for each plan
             const planPrices = [
                 { monthly: 2.99, yearly: (2.99 * 12 * 0.5).toFixed(2) },  // Starter (50% off)
-                { monthly: 5.99, yearly: (5.99 * 12 * 0.5).toFixed(2) },  // Business
-                { monthly: 12.99, yearly: (12.99 * 12 * 0.5).toFixed(2) } // Enterprise
+                { monthly: 5.20, yearly: (5.20 * 12 * 0.5).toFixed(2) },  // Business
+                { monthly: 74.80, yearly: (74.80 * 12 * 0.5).toFixed(2) } // Enterprise
             ];
 
             // Update prices and toggle state

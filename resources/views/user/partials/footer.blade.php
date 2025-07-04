@@ -101,7 +101,8 @@
                                 class="w-1 h-1 bg-indigo-500 rounded-full mr-2 group-hover:mr-3 transition-all"></span>
                             Blog
                         </a></li>
-                    <li><a href="#" class="hover:text-white transition-colors flex items-center group">
+                    <li><a href="{{ route('contact') }}"
+                            class="hover:text-white transition-colors flex items-center group">
                             <span
                                 class="w-1 h-1 bg-indigo-500 rounded-full mr-2 group-hover:mr-3 transition-all"></span>
                             Contact Us

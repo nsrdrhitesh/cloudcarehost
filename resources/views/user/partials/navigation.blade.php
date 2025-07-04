@@ -67,7 +67,7 @@
                         class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                         <div class="py-2">
                             <!-- Shared Hosting -->
-                            <a href="#"
+                            <a href="{{ route('hosting.shared') }}"
                                 class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
                                 <div class="mr-3 mt-0.5 text-indigo-500">
                                     <i class="fas fa-server text-lg"></i>
@@ -199,7 +199,7 @@
                             </a>
 
                             <!-- Contact Us -->
-                            <a href="#"
+                            <a href="{{ route('contact') }}"
                                 class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
                                 <div class="mr-3 mt-0.5 text-indigo-500">
                                     <i class="fas fa-headset text-lg"></i>
@@ -292,7 +292,8 @@
                     </button>
                     <ul class="pl-4 hidden" id="hosting-dropdown">
                         <li>
-                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                            <a href="{{ route('hosting.shared') }}"
+                                class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
                                 <i class="fas fa-server text-indigo-500 mt-1 mr-3 w-4"></i>
                                 <div>
                                     <div>Shared Hosting</div>
@@ -379,7 +380,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                            <a href="{{ route('contact') }}"
+                                class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
                                 <i class="fas fa-headset text-indigo-500 mt-1 mr-3 w-4"></i>
                                 <div>
                                     <div>Contact Us</div>

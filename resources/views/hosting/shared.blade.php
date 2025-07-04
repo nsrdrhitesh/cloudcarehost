@@ -64,82 +64,304 @@
                 </div>
             </div>
 
-            <div class="space-y-6">
-                <!-- Basic Plan -->
-                <div class="border border-gray-200 rounded-lg p-6 hover:border-indigo-300 transition-colors">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h4 class="font-bold text-lg">Basic</h4>
-                            <p class="text-gray-600 text-sm">Perfect for starter websites</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-3xl font-bold">$2.99</span>
-                            <span class="text-gray-500">/mo</span>
-                        </div>
+            <!-- Plan Tabs -->
+            <div class="mb-6 border-b border-gray-200">
+                <ul class="flex flex-wrap -mb-px" id="plan-tabs" role="tablist">
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 rounded-t-lg" id="starter-tab"
+                            data-tabs-target="#starter" type="button" role="tab" aria-controls="starter"
+                            aria-selected="true">Starter</button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="pro-tab" data-tabs-target="#pro" type="button" role="tab" aria-controls="pro"
+                            aria-selected="false">Pro</button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="business-tab" data-tabs-target="#business" type="button" role="tab"
+                            aria-controls="business" aria-selected="false">Business</button>
+                    </li>
+                    <li role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300"
+                            id="business-cloud-tab" data-tabs-target="#business-cloud" type="button" role="tab"
+                            aria-controls="business-cloud" aria-selected="false">Business Cloud</button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Plan Content -->
+            <div id="plan-content">
+                <!-- Starter Plan -->
+                <div class="p-4 rounded-lg bg-gray-50" id="starter" role="tabpanel" aria-labelledby="starter-tab">
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Duration</th>
+                                    <th scope="col" class="px-6 py-3">INR Total Price</th>
+                                    <th scope="col" class="px-6 py-3">USD Total Price</th>
+                                    <th scope="col" class="px-6 py-3">EURO Total Price</th>
+                                    <th scope="col" class="px-6 py-3">AED Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                        Monthly</th>
+                                    <td class="px-6 py-4">₹399</td>
+                                    <td class="px-6 py-4">$4.99</td>
+                                    <td class="px-6 py-4">€4.99</td>
+                                    <td class="px-6 py-4">AED 17.99</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">1 Year
+                                        (60% OFF)</th>
+                                    <td class="px-6 py-4">₹1,908 (₹159×12)</td>
+                                    <td class="px-6 py-4">$23.88 (1.99×12)</td>
+                                    <td class="px-6 py-4">€23.88 (1.99×12)</td>
+                                    <td class="px-6 py-4">AED 83.88 (6.99×12)</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">2
+                                        Years (70% OFF)</th>
+                                    <td class="px-6 py-4">₹2,856 (₹119×24)</td>
+                                    <td class="px-6 py-4">$35.76 (1.49×24)</td>
+                                    <td class="px-6 py-4">€35.76 (1.49×24)</td>
+                                    <td class="px-6 py-4">AED 131.76 (5.49×24)</td>
+                                </tr>
+                                <tr class="bg-white hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">3
+                                        Years (75% OFF)</th>
+                                    <td class="px-6 py-4">₹3,564 (₹99×36)</td>
+                                    <td class="px-6 py-4">$45.00 (1.25×36)</td>
+                                    <td class="px-6 py-4">€45.00 (1.25×36)</td>
+                                    <td class="px-6 py-4">AED 161.64 (4.49×36)</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <ul class="space-y-3 mb-6">
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>1 Website</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>10 GB SSD Storage</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Unmetered Bandwidth</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Free SSL Certificate</span>
-                        </li>
-                    </ul>
-                    <button
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition-colors">Get
-                        Started</button>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg">Starter Features</h4>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li>1 Website</li>
+                                <li>10 GB SSD Storage</li>
+                                <li>Unmetered Bandwidth</li>
+                                <li>Free SSL Certificate</li>
+                            </ul>
+                        </div>
+                        <a href="{{ route('hosting.checkout', ['plan' => 'starter']) }}"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium">Buy
+                            Now</a>
+                    </div>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="hidden p-4 rounded-lg bg-gray-50" id="pro" role="tabpanel" aria-labelledby="pro-tab">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Duration</th>
+                                    <th scope="col" class="px-6 py-3">INR Total Price</th>
+                                    <th scope="col" class="px-6 py-3">USD Total Price</th>
+                                    <th scope="col" class="px-6 py-3">EURO Total Price</th>
+                                    <th scope="col" class="px-6 py-3">AED Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                        Monthly</th>
+                                    <td class="px-6 py-4">₹599</td>
+                                    <td class="px-6 py-4">$7.49</td>
+                                    <td class="px-6 py-4">€7.49</td>
+                                    <td class="px-6 py-4">AED 26.99</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">1 Year
+                                        (60% OFF)</th>
+                                    <td class="px-6 py-4">₹2,868 (₹239×12)</td>
+                                    <td class="px-6 py-4">$35.88 (2.99×12)</td>
+                                    <td class="px-6 py-4">€35.88 (2.99×12)</td>
+                                    <td class="px-6 py-4">AED 131.88 (10.99×12)</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">2
+                                        Years (70% OFF)</th>
+                                    <td class="px-6 py-4">₹4,296 (₹179×24)</td>
+                                    <td class="px-6 py-4">$59.76 (2.49×24)</td>
+                                    <td class="px-6 py-4">€59.76 (2.49×24)</td>
+                                    <td class="px-6 py-4">AED 191.76 (7.99×24)</td>
+                                </tr>
+                                <tr class="bg-white hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">3
+                                        Years (75% OFF)</th>
+                                    <td class="px-6 py-4">₹5,364 (₹149×36)</td>
+                                    <td class="px-6 py-4">$80.04 (2.29×36)</td>
+                                    <td class="px-6 py-4">€80.04 (2.29×36)</td>
+                                    <td class="px-6 py-4">AED 233.64 (6.49×36)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg">Pro Features</h4>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li>Unlimited Websites</li>
+                                <li>50 GB SSD Storage</li>
+                                <li>Unmetered Bandwidth</li>
+                                <li>Free SSL Certificate</li>
+                                <li>Free Domain (1 year)</li>
+                            </ul>
+                        </div>
+                        <a href="{{ route('hosting.checkout', ['plan' => 'pro']) }}"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium">Buy
+                            Now</a>
+                    </div>
                 </div>
 
                 <!-- Business Plan -->
-                <div class="border-2 border-indigo-600 rounded-lg p-6 relative">
-                    <div
-                        class="absolute top-0 right-6 -translate-y-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-semibold">
-                        Most Popular</div>
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h4 class="font-bold text-lg">Business</h4>
-                            <p class="text-gray-600 text-sm">Ideal for growing websites</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="text-3xl font-bold">$5.99</span>
-                            <span class="text-gray-500">/mo</span>
-                        </div>
+                <div class="hidden p-4 rounded-lg bg-gray-50" id="business" role="tabpanel"
+                    aria-labelledby="business-tab">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Duration</th>
+                                    <th scope="col" class="px-6 py-3">INR Total Price</th>
+                                    <th scope="col" class="px-6 py-3">USD Total Price</th>
+                                    <th scope="col" class="px-6 py-3">EURO Total Price</th>
+                                    <th scope="col" class="px-6 py-3">AED Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                        Monthly</th>
+                                    <td class="px-6 py-4">₹799</td>
+                                    <td class="px-6 py-4">$9.99</td>
+                                    <td class="px-6 py-4">€9.99</td>
+                                    <td class="px-6 py-4">AED 34.99</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">1 Year
+                                        (60% OFF)</th>
+                                    <td class="px-6 py-4">₹3,828 (₹319×12)</td>
+                                    <td class="px-6 py-4">$47.88 (3.99×12)</td>
+                                    <td class="px-6 py-4">€47.88 (3.99×12)</td>
+                                    <td class="px-6 py-4">AED 155.88 (12.99×12)</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">2
+                                        Years (70% OFF)</th>
+                                    <td class="px-6 py-4">₹5,736 (₹239×24)</td>
+                                    <td class="px-6 py-4">$79.76 (3.29×24)</td>
+                                    <td class="px-6 py-4">€79.76 (3.29×24)</td>
+                                    <td class="px-6 py-4">AED 251.76 (10.49×24)</td>
+                                </tr>
+                                <tr class="bg-white hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">3
+                                        Years (75% OFF)</th>
+                                    <td class="px-6 py-4">₹7,164 (₹199×36)</td>
+                                    <td class="px-6 py-4">$115.56 (3.21×36)</td>
+                                    <td class="px-6 py-4">€115.56 (3.21×36)</td>
+                                    <td class="px-6 py-4">AED 323.64 (8.99×36)</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <ul class="space-y-3 mb-6">
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Unlimited Websites</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>50 GB SSD Storage</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Unmetered Bandwidth</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Free SSL Certificate</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check text-green-500 mr-2"></i>
-                            <span>Free Domain (1 year)</span>
-                        </li>
-                    </ul>
-                    <button
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition-colors">Get
-                        Started</button>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg">Business Features</h4>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li>Unlimited Websites</li>
+                                <li>100 GB SSD Storage</li>
+                                <li>Unmetered Bandwidth</li>
+                                <li>Free SSL Certificate</li>
+                                <li>Free Domain (1 year)</li>
+                                <li>Free CDN</li>
+                            </ul>
+                        </div>
+                        <a href="{{ route('hosting.checkout', ['plan' => 'business']) }}"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium">Buy
+                            Now</a>
+                    </div>
+                </div>
+
+                <!-- Business Cloud Plan -->
+                <div class="hidden p-4 rounded-lg bg-gray-50" id="business-cloud" role="tabpanel"
+                    aria-labelledby="business-cloud-tab">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Duration</th>
+                                    <th scope="col" class="px-6 py-3">INR Total Price</th>
+                                    <th scope="col" class="px-6 py-3">USD Total Price</th>
+                                    <th scope="col" class="px-6 py-3">EURO Total Price</th>
+                                    <th scope="col" class="px-6 py-3">AED Total Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                        Monthly</th>
+                                    <td class="px-6 py-4">₹1,499</td>
+                                    <td class="px-6 py-4">$18.99</td>
+                                    <td class="px-6 py-4">€18.99</td>
+                                    <td class="px-6 py-4">AED 66.99</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">1 Year
+                                        (60% OFF)</th>
+                                    <td class="px-6 py-4">₹6,588 (₹549×12)</td>
+                                    <td class="px-6 py-4">$89.88 (7.49×12)</td>
+                                    <td class="px-6 py-4">€89.88 (7.49×12)</td>
+                                    <td class="px-6 py-4">AED 287.88 (23.99×12)</td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">2
+                                        Years (70% OFF)</th>
+                                    <td class="px-6 py-4">₹10,788 (₹449×24)</td>
+                                    <td class="px-6 py-4">$154.56 (6.44×24)</td>
+                                    <td class="px-6 py-4">€154.56 (6.44×24)</td>
+                                    <td class="px-6 py-4">AED 447.36 (18.64×24)</td>
+                                </tr>
+                                <tr class="bg-white hover:bg-gray-50">
+                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">3
+                                        Years (75% OFF)</th>
+                                    <td class="px-6 py-4">₹13,464 (₹374×36)</td>
+                                    <td class="px-6 py-4">$215.64 (5.99×36)</td>
+                                    <td class="px-6 py-4">€215.64 (5.99×36)</td>
+                                    <td class="px-6 py-4">AED 674.64 (18.74×36)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg">Business Cloud Features</h4>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li>Unlimited Websites</li>
+                                <li>200 GB SSD Storage</li>
+                                <li>Unmetered Bandwidth</li>
+                                <li>Free SSL Certificate</li>
+                                <li>Free Domain (1 year)</li>
+                                <li>Free CDN & WAF</li>
+                                <li>Dedicated Resources</li>
+                            </ul>
+                        </div>
+                        <a href="{{ route('hosting.checkout', ['plan' => 'business-cloud']) }}"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium">Buy
+                            Now</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -185,11 +407,11 @@
 
         <div class="space-y-4">
             <div class="border-b border-gray-200 pb-4">
-                <button class="flex justify-between items-center w-full text-left font-medium">
+                <button class="flex justify-between items-center w-full text-left font-medium faq-toggle">
                     <span>What is shared hosting?</span>
                     <i class="fas fa-chevron-down transition-transform"></i>
                 </button>
-                <div class="mt-2 text-gray-600 hidden">
+                <div class="mt-2 text-gray-600 hidden faq-content">
                     <p>Shared hosting is a type of web hosting where multiple websites share the same server resources.
                         It's the most affordable hosting option and is perfect for small websites, blogs, and personal
                         projects that don't require dedicated resources.</p>
@@ -197,11 +419,11 @@
             </div>
 
             <div class="border-b border-gray-200 pb-4">
-                <button class="flex justify-between items-center w-full text-left font-medium">
+                <button class="flex justify-between items-center w-full text-left font-medium faq-toggle">
                     <span>Can I upgrade my plan later?</span>
                     <i class="fas fa-chevron-down transition-transform"></i>
                 </button>
-                <div class="mt-2 text-gray-600 hidden">
+                <div class="mt-2 text-gray-600 hidden faq-content">
                     <p>Yes, you can upgrade your shared hosting plan at any time without any downtime. Our support team
                         can help you migrate to a higher plan or even to a VPS or dedicated server when your website
                         grows.</p>
@@ -209,26 +431,93 @@
             </div>
 
             <div class="border-b border-gray-200 pb-4">
-                <button class="flex justify-between items-center w-full text-left font-medium">
+                <button class="flex justify-between items-center w-full text-left font-medium faq-toggle">
                     <span>Do you offer a money-back guarantee?</span>
                     <i class="fas fa-chevron-down transition-transform"></i>
                 </button>
-                <div class="mt-2 text-gray-600 hidden">
+                <div class="mt-2 text-gray-600 hidden faq-content">
                     <p>Yes, we offer a 30-day money-back guarantee on all our shared hosting plans. If you're not
                         satisfied with our service, you can cancel within the first 30 days for a full refund.</p>
                 </div>
             </div>
 
             <div class="border-b border-gray-200 pb-4">
-                <button class="flex justify-between items-center w-full text-left font-medium">
+                <button class="flex justify-between items-center w-full text-left font-medium faq-toggle">
                     <span>What control panel do you use?</span>
                     <i class="fas fa-chevron-down transition-transform"></i>
                 </button>
-                <div class="mt-2 text-gray-600 hidden">
+                <div class="mt-2 text-gray-600 hidden faq-content">
                     <p>We use cPanel, the industry-standard hosting control panel that makes managing your website,
                         emails, databases, and files simple and intuitive.</p>
                 </div>
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tabs = document.querySelectorAll('[role="tab"]');
+                const tabContents = document.querySelectorAll('[role="tabpanel"]');
+
+                function proTab() {
+
+                }
+
+                function activateTab(tab) {
+                    const targetId = tab.getAttribute('data-tabs-target');
+
+                    // Deactivate all tabs and contents
+                    tabs.forEach(t => {
+                        t.classList.remove('border-indigo-600', 'text-indigo-600');
+                        t.classList.add('border-transparent', 'text-gray-500');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                        content.setAttribute('aria-hidden', 'true');
+                    });
+
+                    // Activate selected tab and content
+                    tab.classList.add('border-indigo-600', 'text-indigo-600');
+                    tab.classList.remove('border-transparent', 'text-gray-500');
+                    tab.setAttribute('aria-selected', 'true');
+
+                    const activeContent = document.querySelector(targetId);
+                    activeContent.classList.remove('hidden');
+                    activeContent.setAttribute('aria-hidden', 'false');
+                }
+
+                // Activate first tab by default
+                if (tabs.length > 0) {
+                    activateTab(tabs[0]);
+                }
+
+                // Handle tab click events
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        activateTab(tab);
+                    });
+                });
+
+                const faqToggles = document.querySelectorAll('.faq-toggle');
+                faqToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function () {
+                        const content = this.nextElementSibling;
+                        const icon = this.querySelector('i');
+
+                        content.classList.toggle('hidden');
+                        icon.classList.toggle('rotate-180');
+
+                        // Update aria-expanded attribute for accessibility
+                        const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                        this.setAttribute('aria-expanded', !isExpanded);
+                    });
+                });
+            });
+
+        </script>
+    @endpush
 </x-hosting-layout>

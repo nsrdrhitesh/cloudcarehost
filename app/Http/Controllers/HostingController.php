@@ -40,4 +40,21 @@ class HostingController extends Controller
     {
         return view('hosting.compare');
     }
+
+    public function checkout($plan)
+    {
+        if (!in_array($plan, ['starter', 'pro', 'business', 'business-cloud'])) {
+            abort(404);
+        }
+
+        return view('hosting.checkout', compact('plan'));
+    }
+
+    public function process(Request $request)
+    {
+        // Process the payment and create the hosting account
+        // This would integrate with your payment processor
+
+        return redirect()->route('hosting.success');
+    }
 }

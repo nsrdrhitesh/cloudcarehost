@@ -8,7 +8,7 @@
     </section>
 
     <!-- Breadcrumbs -->
-    <div class="container mx-auto px-4 py-4">
+    <div class="container max-w-screen-xl mx-auto mx-auto mx-auto px-4 py-4">
         <nav class="flex" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Page Content -->
-    <div class="container mx-auto px-4 py-12">
+    <div class="container  max-w-screen-xl mx-auto mx-auto mx-auto px-4 py-12">
         {{ $slot }}
     </div>
 
@@ -50,7 +50,7 @@
                 <a href="{{ route('hosting.index') }}"
                     class="bg-white text-indigo-600 hover:bg-gray-100 px-8 py-3 rounded-lg font-medium transition-colors">View
                     All Plans</a>
-                <a
+                <a 
                     class="border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-3 rounded-lg font-medium transition-colors">Contact
                     Sales</a>
                 <!-- contact us la call karaycha ethun -->

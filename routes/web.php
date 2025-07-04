@@ -23,6 +23,10 @@ Route::get('/sitemap', function () {
     return view('user.sitemap');
 })->name('sitemap');
 
+Route::get('/contact', function () {
+    return view('user.contact');
+})->name('contact');
+
 // Hosting Routes
 Route::prefix('hosting')->group(function () {
     Route::get('/', [HostingController::class, 'index'])->name('hosting.index');
@@ -32,6 +36,8 @@ Route::prefix('hosting')->group(function () {
     Route::get('/vps', [HostingController::class, 'vps'])->name('hosting.vps');
     Route::get('/dedicated', [HostingController::class, 'dedicated'])->name('hosting.dedicated');
     Route::get('/compare', [HostingController::class, 'compare'])->name('hosting.compare');
+    Route::get('/checkout/{plan}', [HostingController::class, 'checkout'])->name('hosting.checkout');
+    Route::post('/process', [HostingController::class, 'process'])->name('hosting.process');
 });
 
 Route::get('/dashboard', function () {
