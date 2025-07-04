@@ -19,6 +19,9 @@
                     <li><a href="{{ route('hosting.dedicated') }}"
                             class="text-gray-300 hover:text-white transition-colors hover:pl-1">Dedicated
                             Servers</a></li>
+                    <li><a href="{{ route('hosting.dedicated') }}"
+                            class="text-gray-300 hover:text-white transition-colors hover:pl-1">Dedicated
+                            Servers</a></li>
                 </ul>
             </div>
 
@@ -27,14 +30,14 @@
                 <ul class="space-y-2">
                     <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Domain
                             Search</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Domain
-                            Transfer</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">WHOIS Lookup</a>
-                    </li>
+                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">SSL
+                            certificate</a></li>
+                    <!-- <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">WHOIS Lookup</a>
+                    </li> -->
                     <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Domain
                             Pricing</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Free Domain</a>
-                    </li>
+                    <!-- <li><a href="#" class="text-gray-300 hover:text-white transition-colors hover:pl-1">Free Domain</a>
+                    </li> -->
                 </ul>
             </div>
 
