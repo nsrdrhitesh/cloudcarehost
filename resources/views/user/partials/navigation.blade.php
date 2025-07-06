@@ -371,7 +371,8 @@
                     </button>
                     <ul class="pl-4 hidden" id="help-dropdown">
                         <li>
-                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                            <a href="{{ route('knowledge-base') }}"
+                                class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
                                 <i class="fas fa-book text-indigo-500 mt-1 mr-3 w-4"></i>
                                 <div>
                                     <div>Knowledgebase</div>
@@ -390,7 +391,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
+                            <a href="{{ route('articles') }}"
+                                class="flex items-start py-2 text-gray-600 hover:text-indigo-600">
                                 <i class="fas fa-newspaper text-indigo-500 mt-1 mr-3 w-4"></i>
                                 <div>
                                     <div>Blog</div>
