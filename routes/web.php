@@ -40,6 +40,22 @@ Route::prefix('hosting')->group(function () {
     Route::post('/process', [HostingController::class, 'process'])->name('hosting.process');
 });
 
+Route::get('/knowledge-base', function () {
+    return view('user.knowledge-base');
+})->name('knowledge-base');
+
+Route::get('/articles', function () {
+    return view('user.articles');
+})->name('articles');
+
+Route::get('/single-articles', function () {
+    return view('user.single-blog');
+})->name('single-articles');
+
+Route::get('/guides', function () {
+    return view('user.guides');
+})->name('guides');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

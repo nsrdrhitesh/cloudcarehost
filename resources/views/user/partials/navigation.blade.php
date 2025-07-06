@@ -187,7 +187,7 @@
                         class="absolute left-0 mt-2 w-72 bg-white rounded-lg shadow-xl z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform group-hover:translate-y-0 translate-y-2">
                         <div class="py-2">
                             <!-- Knowledgebase -->
-                            <a href="#"
+                            <a href="{{ route('knowledge-base') }}"
                                 class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
                                 <div class="mr-3 mt-0.5 text-indigo-500">
                                     <i class="fas fa-book text-lg"></i>
@@ -211,7 +211,7 @@
                             </a>
 
                             <!-- Blog -->
-                            <a href="#"
+                            <a href="{{ route('articles') }}"
                                 class="flex items-start px-4 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors group">
                                 <div class="mr-3 mt-0.5 text-indigo-500">
                                     <i class="fas fa-newspaper text-lg"></i>
