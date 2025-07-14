@@ -57,11 +57,11 @@ export default function Hero() {
             
             <div className="flex flex-wrap items-center gap-6 text-sm">
               <div className="flex items-center">
-                <div className="flex -space-x-2 mr-3">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shield">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>
-                </div>
+                  <div className="flex -space-x-2 mr-3">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-shield">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                      </svg>
+                  </div>
                 <span>Trusted by 10,000+ businesses</span>
               </div>
               <div className="flex items-center">
