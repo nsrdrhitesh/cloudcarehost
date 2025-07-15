@@ -329,7 +329,9 @@ export default function SharedHosting() {
           </div>
         );
       })}
-    </div>
+          </div>
+          
+          
     
     <div className="mt-12 text-center">
       <p className="text-gray-600 mb-4">* Free domain registration for 1st year with annual plans</p>
