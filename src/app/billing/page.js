@@ -138,14 +138,14 @@ export default function BillingPage() {
                   <span>{plan} Hosting ({cycleLabel[cycle]})</span>
                   <span>${planDetails[plan][cycle].price}/{cycle === 'monthly' ? 'mo' : cycle === 'yearly' ? 'yr' : '2yrs'}</span>
                 </div>
-                {cycle !== 'monthly' && (
+                {/* {cycle !== 'monthly' && (
                 <div className="flex justify-between py-2 border-b border-gray-200">
                     <span>Discount ({calculateSavings()}%)</span>
                     <span className="text-green-600">
                     -${(planDetails[plan].monthly.price * (cycle === 'yearly' ? 12 : 24) - planDetails[plan][cycle].final)}
                     </span>
                 </div>
-                )}
+                )} */}
 
                 <div className="flex justify-between py-2 font-bold">
                   <span>Total</span>
