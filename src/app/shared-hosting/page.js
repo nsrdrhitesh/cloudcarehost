@@ -314,7 +314,7 @@ export default function SharedHosting() {
                 ))}
               </ul>
               
-              <Link 
+              {/* <Link 
                 href={{
                   pathname: "/billing",
                   query: { plan: plan.name.toLowerCase(), cycle: billingCycle }
@@ -324,7 +324,7 @@ export default function SharedHosting() {
                 }`}
               >
                 {plan.cta}
-              </Link>
+              </Link> */}
             </div>
           </div>
         );
