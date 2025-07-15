@@ -132,26 +132,7 @@ export default function BillingPage() {
               </div>
               
               {/* Order Summary */}
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-bold text-blue-900 mb-2">Order Summary</h4>
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                  <span>{plan} Hosting ({cycleLabel[cycle]})</span>
-                  <span>${planDetails[plan][cycle].price}/{cycle === 'monthly' ? 'mo' : cycle === 'yearly' ? 'yr' : '2yrs'}</span>
-                </div>
-                {/* {cycle !== 'monthly' && (
-                <div className="flex justify-between py-2 border-b border-gray-200">
-                    <span>Discount ({calculateSavings()}%)</span>
-                    <span className="text-green-600">
-                    -${(planDetails[plan].monthly.price * (cycle === 'yearly' ? 12 : 24) - planDetails[plan][cycle].final)}
-                    </span>
-                </div>
-                )} */}
-
-                <div className="flex justify-between py-2 font-bold">
-                  <span>Total</span>
-                  <span>${planDetails[plan][cycle].final}</span>
-                </div>
-              </div>
+             
               
               {/* Terms and Submit */}
               <div className="flex items-start">
