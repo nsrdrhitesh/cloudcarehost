@@ -17,8 +17,10 @@ export default function BlogContent({ content }) {
               <p>Before making any major changes to your WordPress site, always create a complete backup. Many optimization plugins offer backup features, or you can use a dedicated backup solution.</p>
             </div>
           </div>
+
         </div>
       </div>
     </article>
+    
   )
 }
