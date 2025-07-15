@@ -1,11 +1,11 @@
 "use client"
 
-import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 export default function BillingPage() {
-  const searchParams = useSearchParams();
-  const plan = searchParams.get('plan');
-  const cycle = searchParams.get('cycle');
+  const router = useRouter();
+  const plan = router.get('plan');
+  const cycle = router.get('cycle');
 
   // Plan details based on selection
   const planDetails = {
