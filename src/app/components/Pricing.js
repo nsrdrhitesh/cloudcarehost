@@ -1,74 +1,165 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function Pricing() {
-  // State to manage the selected pricing period (monthly, yearly, twoYearly)
   const [pricingPeriod, setPricingPeriod] = useState('yearly');
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+  const [currencies, setCurrencies] = useState([]);
 
-  // Define the pricing plans with different prices for each period
-  const plans = [
-    {
-      name: "Starter",
-      description: "Perfect for small websites and blogs, offering essential features to get you online.",
-      prices: {
-        monthly: { amount: "$2.99", savings: null },
-        yearly: { amount: "$29.99", savings: "Save 16%" }, // ($2.50/month)
-        twoYearly: { amount: "$49.99", savings: "Save 30%" } // (~$2.08/month)
-      },
-      features: [
-        "1 Website",
-        "10GB SSD Storage",
-        "Unmetered Bandwidth",
-        "Free SSL Certificate",
-        "24/7 Basic Support",
-        "Weekly Backups"
-      ],
-      popular: false
-    },
-    {
-      name: "Business",
-      description: "Ideal for growing businesses needing more resources and advanced support.",
-      prices: {
-        monthly: { amount: "$5.99", savings: null },
-        yearly: { amount: "$59.99", savings: "Save 16%" }, // (~$5.00/month)
-        twoYearly: { amount: "$99.99", savings: "Save 30%" } // (~$4.17/month)
-      },
-      features: [
-        "Unlimited Websites",
-        "50GB SSD Storage",
-        "Unmetered Bandwidth",
-        "Free SSL Certificate",
-        "Free Domain (1 year)",
-        "24/7 Priority Support",
-        "Daily Backups",
-        "Staging Environment"
-      ],
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      description: "For high-traffic websites and large-scale applications requiring maximum performance and dedicated resources.",
-      prices: {
-        monthly: { amount: "$9.99", savings: null },
-        yearly: { amount: "$99.99", savings: "Save 16%" }, // (~$8.33/month)
-        twoYearly: { amount: "$169.99", savings: "Save 30%" } // (~$7.08/month)
-      },
-      features: [
-        "Unlimited Websites",
-        "100GB SSD Storage",
-        "Unmetered Bandwidth",
-        "Free SSL Certificate",
-        "Free Domain (1 year)",
-        "Free CDN",
-        "24/7 VIP Support",
-        "Real-time Backups",
-        "Dedicated IP",
-        "Advanced Security"
-      ],
-      popular: false
-    }
-  ];
+  // Fetch currencies first
+  useEffect(() => {
+    const fetchCurrencies = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/currencies');
+        if (!response.ok) {
+          throw new Error('Failed to fetch currencies');
+        }
+        const data = await response.json();
+        setCurrencies(data.data);
+        // Set default currency to USD if available
+        if (data.data.some(c => c.code === 'USD')) {
+          setSelectedCurrency('USD');
+        } else if (data.data.length > 0) {
+          setSelectedCurrency(data.data[0].code);
+        }
+      } catch (err) {
+        console.error('Error fetching currencies:', err);
+        setError('Failed to load currency data');
+      }
+    };
+
+    fetchCurrencies();
+  }, []);
+
+  // Fetch plans data from API
+  useEffect(() => {
+    const fetchPlans = async () => {
+      if (currencies.length === 0) return; // Don't fetch until we have currencies
+
+      try {
+        setLoading(true);
+        
+        // Fetch all three plans in parallel
+        const responses = await Promise.all([
+          fetch('http://localhost:3000/api/hosting/2'),
+          fetch('http://localhost:3000/api/hosting/6'),
+          fetch('http://localhost:3000/api/hosting/10')
+        ]);
+
+        // Check if any response failed
+        const errors = responses.filter(response => !response.ok);
+        if (errors.length > 0) {
+          throw new Error(`${errors.length} plan(s) failed to load`);
+        }
+
+        // Extract JSON data from responses
+        const data = await Promise.all(responses.map(r => r.json()));
+        
+        // Transform API data to match our component structure
+        const formattedPlans = data.map(item => {
+          const currencyData = item.data.pricing.find(p => p.currency.code === selectedCurrency) || 
+                             item.data.pricing[0]; // Fallback to first currency if selected not found
+
+          return {
+            id: item.data.id,
+            name: item.data.name,
+            description: item.data.description,
+            popular: item.data.popular,
+            features: item.data.features,
+            pricing: item.data.pricing, // Keep all pricing data
+            prices: {
+              monthly: {
+                // ${currencyData.currency.symbol}
+                // ${currencyData.currency.symbol}
+                // ${currencyData.currency.symbol}
+                amount: `${currencyData.monthly.discount_price}`,
+                savings: currencyData.monthly.discount_percent ? 
+                        `${currencyData.monthly.discount_percent} OFF` : null
+              },
+              yearly: {
+                amount: `${currencyData.yearly.discount_price}`,
+                savings: currencyData.yearly.discount_percent ? 
+                        `${currencyData.yearly.discount_percent} OFF` : null
+              },
+              twoYearly: {
+                amount: `${currencyData.biennially.discount_price}`,
+                savings: currencyData.biennially.discount_percent ? 
+                        `${currencyData.biennially.discount_percent} OFF` : null
+              }
+            },
+            cta: item.data.cta || 'Get Started'
+          };
+        });
+
+        setPlans(formattedPlans);
+        setLoading(false);
+      } catch (err) {
+        console.error('Failed to fetch plans:', err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, [selectedCurrency, currencies]);
+
+  // Handle currency change
+  const handleCurrencyChange = (e) => {
+    setSelectedCurrency(e.target.value);
+  };
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4 max-w-7xl text-center">
+          <div className="animate-pulse">
+            <div className="h-12 bg-gray-300 rounded w-1/2 mx-auto mb-6"></div>
+            <div className="h-6 bg-gray-300 rounded w-2/3 mx-auto mb-8"></div>
+            <div className="h-10 bg-gray-300 rounded-full w-1/3 mx-auto mb-16"></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {[1, 2, 3].map((_, index) => (
+                <div key={index} className="bg-white rounded-2xl p-8 h-[600px]">
+                  <div className="space-y-4">
+                    <div className="h-8 bg-gray-300 rounded w-1/3"></div>
+                    <div className="h-4 bg-gray-300 rounded w-full"></div>
+                    <div className="h-12 bg-gray-300 rounded w-1/2"></div>
+                    {[1, 2, 3, 4, 5, 6].map((_, idx) => (
+                      <div key={idx} className="h-4 bg-gray-300 rounded w-full"></div>
+                    ))}
+                    <div className="h-12 bg-gray-300 rounded-xl w-full mt-8"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="container mx-auto px-4 max-w-7xl text-center">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            <strong className="font-bold">Error loading pricing:</strong>
+            <span className="block sm:inline"> {error}</span>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-100 font-inter" id="pricing">
@@ -81,6 +172,25 @@ export default function Pricing() {
             Choose the perfect plan that fits your website's requirements. No hidden fees, no surprises.
             Upgrade or downgrade anytime with ease.
           </p>
+
+          {/* Currency Selector */}
+          <div className="mb-8">
+            <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-2">
+              Select Currency:
+            </label>
+            <select
+              id="currency"
+              value={selectedCurrency}
+              onChange={handleCurrencyChange}
+              className="mt-1 block w-40 mx-auto rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+            >
+              {currencies.map((currency) => (
+                <option key={currency.code} value={currency.code}>
+                  {currency.name} ({currency.symbol})
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Pricing Period Toggle */}
           <div className="inline-flex bg-white p-1 rounded-full shadow-lg border border-gray-200 animate-fade-in-up">
@@ -98,7 +208,7 @@ export default function Pricing() {
             >
               Yearly
               <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full rotate-6 transform origin-top-right">
-                16% OFF
+                SAVE
               </span>
             </button>
             <button
@@ -108,7 +218,7 @@ export default function Pricing() {
             >
               2-Yearly
               <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full rotate-6 transform origin-top-right">
-                30% OFF
+                BEST
               </span>
             </button>
           </div>
@@ -118,7 +228,7 @@ export default function Pricing() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <div
-              key={index}
+              key={plan.id}
               className={`relative bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-200
                 transform transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl
                 ${plan.popular ? 'md:-translate-y-6 border-blue-600 ring-4 ring-blue-200' : ''}`}
@@ -164,7 +274,7 @@ export default function Pricing() {
                   className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300
                     ${plan.popular ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl' : 'bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:shadow-md'}`}
                 >
-                  Get Started
+                  {plan.cta}
                 </button>
               </div>
             </div>
@@ -189,7 +299,8 @@ export default function Pricing() {
           </a>
         </div>
       </div>
-      {/* Custom CSS for simple animations */}
+      
+      {/* Custom CSS for animations */}
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         .font-inter {
@@ -210,7 +321,7 @@ export default function Pricing() {
         .animate-fade-in-up {
           animation: fadeInUp 0.7s ease-out forwards;
           animation-delay: 0.2s;
-          opacity: 0; /* Start invisible */
+          opacity: 0;
         }
 
         @keyframes bounceIn {
@@ -243,7 +354,7 @@ export default function Pricing() {
         .animate-bounce-in {
           animation: bounceIn 1s ease-out forwards;
           animation-delay: 0.5s;
-          opacity: 0; /* Start invisible */
+          opacity: 0;
         }
       `}</style>
     </section>
