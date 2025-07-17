@@ -14,7 +14,8 @@ export default function Pricing() {
   useEffect(() => {
     const fetchCurrencies = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/currencies');
+        // fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/currencies`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/currencies`);
         if (!response.ok) {
           throw new Error('Failed to fetch currencies');
         }
@@ -45,9 +46,9 @@ export default function Pricing() {
         
         // Fetch all three plans in parallel
         const responses = await Promise.all([
-          fetch('http://localhost:3000/api/hosting/2'),
-          fetch('http://localhost:3000/api/hosting/6'),
-          fetch('http://localhost:3000/api/hosting/10')
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hosting/2`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hosting/6`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hosting/10`)
         ]);
 
         // Check if any response failed
