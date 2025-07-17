@@ -46,9 +46,9 @@ export default function Pricing() {
         
         // Fetch all three plans in parallel
         const responses = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hosting/2`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hosting/6`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hosting/10`)
+          fetch(`/api/hosting/2`),
+          fetch(`/api/hosting/6`),
+          fetch(`/api/hosting/10`)
         ]);
 
         // Check if any response failed
@@ -262,7 +262,7 @@ export default function Pricing() {
 
                 <ul className="mb-10 space-y-4 flex-grow">
                   {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center text-gray-700">
+                    <li key={idx} className="flex items-center text-black">
                       <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                       </svg>
