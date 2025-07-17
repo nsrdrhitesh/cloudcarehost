@@ -24,7 +24,7 @@ export default function NavBar() {
               <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM13 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM13 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2z" />
             </svg>
           ),
-          href: '/shared-hosting'
+          href: '/hosting/shared'
         },
         {
           name: 'WordPress Hosting',
@@ -34,7 +34,7 @@ export default function NavBar() {
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 102 0V6zm-1 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
             </svg>
           ),
-          href: '/wordpress-hosting'
+          href: '/hosting/wordpress'
         },
         {
           name: 'VPS Hosting',
@@ -44,7 +44,7 @@ export default function NavBar() {
               <path fillRule="evenodd" d="M10 1a1 1 0 011 1v2a1 1 0 11-2 0V2a1 1 0 011-1zm-4 8a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm-1 4a1 1 0 011-1h8a1 1 0 110 2H5a1 1 0 01-1-1zm10-7a1 1 0 10-2 0v2a1 1 0 102 0V7z" clipRule="evenodd" />
             </svg>
           ),
-          href: '/vps-hosting'
+          href: '/hosting/vps'
         },
         {
           name: 'Dedicated Hosting',
@@ -54,7 +54,7 @@ export default function NavBar() {
               <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 01-2 0V3a1 1 0 011-1zm0 14a1 1 0 01-1 1v1a1 1 0 012 0v-1a1 1 0 01-1-1zm7-8a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM3 9a1 1 0 011-1h1a1 1 0 110 2H4a1 1 0 01-1-1zm11.293-4.707a1 1 0 010 1.414L12.414 8l1.879 1.879a1 1 0 11-1.414 1.414L11 9.414l-1.879 1.879a1 1 0 01-1.414-1.414L9.586 8 7.707 6.121a1 1 0 111.414-1.414L11 6.586l1.879-1.879a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
           ),
-          href: '/dedicated-hosting'
+          href: '/hosting/dedicated'
         }
       ]
     },
@@ -70,7 +70,7 @@ export default function NavBar() {
               <path d="M4 4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-4V3a1 1 0 10-2 0v1H8V3a1 1 0 10-2 0v1H4zM6 8a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm0 4a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1z" />
             </svg>
           ),
-          href: '/woocommerce-hosting'
+          href: '/hosting/woocommerce'
         },
         {
           name: 'Reseller Hosting',
@@ -80,7 +80,7 @@ export default function NavBar() {
               <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
             </svg>
           ),
-          href: '/reseller-hosting'
+          href: '/hosting/reseller'
         }
       ]
     },
