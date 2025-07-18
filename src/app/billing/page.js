@@ -1,12 +1,22 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Loading from '@/app/components/Loading'
 import RazorpayScript from '@/app/components/RazorpayScript'
 import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon, StarIcon } from '@heroicons/react/24/outline'
 
+// Main page wrapper with Suspense
 export default function BillingPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <BillingContent />
+    </Suspense>
+  )
+}
+
+// All your existing component logic moved here
+function BillingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
