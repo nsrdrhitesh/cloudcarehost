@@ -268,7 +268,8 @@ export default function HostingPage() {
                         query: { 
                           plan: plan.name.toLowerCase(), 
                           type: apiType,
-                          cycle: billingCycle 
+                          cycle: billingCycle,
+                          id: plan.id // Add the plan ID here
                         }
                       }}
                       className={`w-full block text-center py-3 rounded-lg font-bold transition ${

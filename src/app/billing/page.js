@@ -1,10 +1,10 @@
 "use client"
-
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Loading from '@/app/components/Loading'
-import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import RazorpayScript from '@/app/components/RazorpayScript'
+import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon, StarIcon } from '@heroicons/react/24/outline'
 
 export default function BillingPage() {
   const router = useRouter()
@@ -13,6 +13,7 @@ export default function BillingPage() {
   const [loading, setLoading] = useState(true)
   const [domainLoading, setDomainLoading] = useState(false)
   const [orderSummary, setOrderSummary] = useState(null)
+  const [hostingPlan, setHostingPlan] = useState(null)
   const [domainOptions, setDomainOptions] = useState([])
   const [domainSearch, setDomainSearch] = useState('')
   const [selectedDomain, setSelectedDomain] = useState(null)
@@ -20,6 +21,7 @@ export default function BillingPage() {
   const [useExistingDomain, setUseExistingDomain] = useState(true)
   const [serverLocation, setServerLocation] = useState('us-east')
   const [accountOption, setAccountOption] = useState('new')
+  const [selectedCurrency, setSelectedCurrency] = useState('USD')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -36,40 +38,72 @@ export default function BillingPage() {
     autoGeneratePassword: false
   })
 
-  // Initialize order summary from URL params
+  // Fetch hosting plan data based on ID from URL
   useEffect(() => {
-    if (searchParams) {
-      const plan = searchParams.get('plan')
-      const type = searchParams.get('type')
-      const cycle = searchParams.get('cycle')
-      
-      const priceMap = {
-        'basic': { monthly: 5.99, yearly: 4.99, biennially: 3.99 },
-        'standard': { monthly: 9.99, yearly: 8.99, biennially: 7.99 },
-        'premium': { monthly: 14.99, yearly: 12.99, biennially: 10.99 },
-        'enterprise': { monthly: 24.99, yearly: 21.99, biennially: 18.99 }
+    const fetchHostingPlan = async () => {
+      try {
+        const planId = searchParams.get('id')
+        if (!planId) {
+          router.push('/hosting')
+          return
+        }
+        
+        const response = await fetch(`/api/hosting/${planId}`)
+        const data = await response.json()
+        
+        if (data.success) {
+          setHostingPlan(data.data)
+          // Initialize order summary with default values
+          const defaultPricing = data.data.pricing.find(p => p.currency.code === 'USD') || data.data.pricing[0]
+          setSelectedCurrency(defaultPricing.currency.code)
+          
+          setOrderSummary({
+            id: data.data.id,
+            name: data.data.name,
+            type: data.data.hosting_type,
+            cycle: 'yearly',
+            price: parseFloat(defaultPricing.yearly.discount_price.replace(/[^\d.-]/g, '')),
+            originalPrice: parseFloat(defaultPricing.yearly.price.replace(/[^\d.-]/g, '')),
+            cycleText: 'Yearly',
+            domainPrice: 14.99,
+            total: parseFloat(defaultPricing.yearly.discount_price.replace(/[^\d.-]/g, '')) + 14.99,
+            currency: defaultPricing.currency
+          })
+        } else {
+          router.push('/hosting')
+        }
+      } catch (error) {
+        console.error('Error fetching hosting plan:', error)
+        router.push('/hosting')
+      } finally {
+        setLoading(false)
       }
-
-      const cycleText = {
-        monthly: 'Monthly',
-        yearly: 'Yearly',
-        biennially: '2 Years'
-      }
-
-      const domainPrice = 14.99 // Default domain price
-
-      setOrderSummary({
-        plan,
-        type,
-        cycle,
-        price: priceMap[plan]?.[cycle] || 9.99,
-        cycleText: cycleText[cycle] || 'Monthly',
-        domainPrice,
-        total: priceMap[plan]?.[cycle] || 9.99
-      })
-      setLoading(false)
     }
-  }, [searchParams])
+    
+    fetchHostingPlan()
+  }, [searchParams, router])
+
+  // Handle currency change
+  const handleCurrencyChange = (currencyCode) => {
+    if (!hostingPlan) return
+    
+    const newCurrency = hostingPlan.pricing.find(p => p.currency.code === currencyCode)
+    if (!newCurrency) return
+    
+    setSelectedCurrency(currencyCode)
+    
+    // Update order summary with new currency pricing
+    const currentCycle = orderSummary?.cycle || 'yearly'
+    const cycleData = newCurrency[currentCycle]
+    
+    setOrderSummary(prev => ({
+      ...prev,
+      price: parseFloat(cycleData.discount_price.replace(/[^\d.-]/g, '')),
+      originalPrice: parseFloat(cycleData.price.replace(/[^\d.-]/g, '')),
+      currency: newCurrency.currency,
+      total: parseFloat(cycleData.discount_price.replace(/[^\d.-]/g, '')) + (selectedDomain?.price || 0)
+    }))
+  }
 
   // Handle domain search
   const handleDomainSearch = async (e) => {
@@ -134,30 +168,89 @@ export default function BillingPage() {
     }))
   }
 
+  // Handle billing cycle change
+  const handleBillingCycleChange = (cycle) => {
+    if (!hostingPlan || !orderSummary) return
+    
+    const currencyPricing = hostingPlan.pricing.find(p => p.currency.code === selectedCurrency)
+    if (!currencyPricing) return
+    
+    const cycleData = currencyPricing[cycle]
+    const cycleTextMap = {
+      monthly: 'Monthly',
+      yearly: 'Yearly',
+      biennially: '2 Years'
+    }
+    
+    setOrderSummary(prev => ({
+      ...prev,
+      cycle,
+      price: parseFloat(cycleData.discount_price.replace(/[^\d.-]/g, '')),
+      originalPrice: parseFloat(cycleData.price.replace(/[^\d.-]/g, '')),
+      cycleText: cycleTextMap[cycle],
+      total: parseFloat(cycleData.discount_price.replace(/[^\d.-]/g, '')) + (selectedDomain?.price || 0)
+    }))
+  }
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Here you would typically send data to your backend
-    // For demo purposes, we'll simulate a payment redirect
-    
-    // Simulate API call
+    // Validate form
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match')
+      return
+    }
+  
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      // In a real app, you would redirect to Razorpay
-      alert('Redirecting to Razorpay payment gateway...')
-      // This would be the actual Razorpay integration:
-      /*
+    
+    try {
+      // Prepare order data
+      const orderData = {
+        amount: orderSummary.total,
+        currency: orderSummary.currency.code,
+        receipt: `order_${Date.now()}_${orderSummary.id}`
+      }
+    
+      console.log('Submitting order:', orderData) // Debug log
+    
+      // First create an order on your server
+      const orderResponse = await fetch('/api/razorpay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+      })
+    
+      console.log('API response status:', orderResponse.status) // Debug log
+    
+      // Check if response is OK
+      if (!orderResponse.ok) {
+        const errorData = await orderResponse.json()
+        console.error('API error response:', errorData) // Debug log
+        throw new Error(errorData.error || `Server returned ${orderResponse.status}`)
+      }
+    
+      const orderResult = await orderResponse.json()
+      console.log('Order creation result:', orderResult) // Debug log
+      
+      if (!orderResult.success) {
+        throw new Error(orderResult.error || 'Failed to create payment order')
+      }
+    
+      // Prepare Razorpay options
       const options = {
-        key: 'rzp_test_YOUR_KEY_ID',
-        amount: orderSummary.total * 100,
-        currency: 'USD',
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
+        amount: orderResult.order.amount,
+        currency: orderResult.order.currency,
         name: 'Your Hosting Company',
-        description: `${orderSummary.type} - ${orderSummary.plan}`,
+        description: `${orderSummary.type} - ${orderSummary.name}`,
         image: '/logo.png',
+        order_id: orderResult.order.id,
         handler: function(response) {
-          alert('Payment successful! Payment ID: ' + response.razorpay_payment_id)
+          console.log('Payment success:', response) // Debug log
+          alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`)
           router.push('/success')
         },
         prefill: {
@@ -166,22 +259,39 @@ export default function BillingPage() {
           contact: formData.phone
         },
         notes: {
-          address: `${formData.street}, ${formData.city}, ${formData.country}`
+          address: `${formData.street}, ${formData.city}, ${formData.country}`,
+          order_id: orderSummary.id,
+          domain: useExistingDomain ? existingDomain : selectedDomain?.name
         },
         theme: {
           color: '#2563eb'
         }
       }
+    
+      console.log('Razorpay options:', options) // Debug log
+    
+      // Open Razorpay checkout
       const rzp = new window.Razorpay(options)
       rzp.open()
-      */
-    }, 1500)
+      
+      rzp.on('payment.failed', function(response) {
+        console.error('Payment failed:', response) // Debug log
+        alert(`Payment failed: ${response.error.description}`)
+      })
+    } catch (error) {
+      console.error('Full payment error:', error) // Debug log
+      alert(`Payment failed: ${error.message}`)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  if (loading || !orderSummary) return <Loading />
+  if (loading || !orderSummary || !hostingPlan) return <Loading />
 
   return (
-    <main className="bg-gray-50 min-h-screen">
+      <main className="bg-gray-50 min-h-screen">
+          <RazorpayScript />
+
       {/* Progress indicator */}
       <div className="bg-white shadow-sm">
         <div className="container mx-auto px-4 py-6">
@@ -299,7 +409,7 @@ export default function BillingPage() {
                                   <div className="flex items-center">
                                     {domain.available ? (
                                       <>
-                                        <span className="text-green-600 font-medium">${domain.price}/yr</span>
+                                        <span className="text-green-600 font-medium">${domain.price.toFixed(2)}/yr</span>
                                         <ChevronRightIcon className="w-5 h-5 text-gray-400 ml-2" />
                                       </>
                                     ) : (
@@ -331,41 +441,82 @@ export default function BillingPage() {
             {step === 2 && (
               <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <h2 className="text-2xl font-bold text-gray-800">Complete Your Order</h2>
-                  <p className="text-gray-600 mt-2">Enter your billing information to complete your purchase.</p>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-800">Complete Your Order</h2>
+                      <p className="text-gray-600 mt-2">Enter your billing information to complete your purchase.</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {hostingPlan.popular && (
+                        <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full flex items-center">
+                          <StarIcon className="w-3 h-3 mr-1" /> Popular
+                        </span>
+                      )}
+                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        {hostingPlan.hosting_type}
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="p-6 space-y-8">
+                  {/* Currency Selector */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-800 mb-2">Select Currency</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {hostingPlan.pricing.map((currencyOption) => (
+                        <button
+                          key={currencyOption.currency.code}
+                          type="button"
+                          onClick={() => handleCurrencyChange(currencyOption.currency.code)}
+                          className={`px-3 py-1.5 rounded-md text-sm font-medium ${selectedCurrency === currencyOption.currency.code ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                        >
+                          {currencyOption.currency.code} ({currencyOption.currency.symbol})
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  
                   {/* Choose Billing Cycle */}
                   <div>
                     <h3 className="text-lg font-medium text-gray-800 mb-4">Choose Billing Cycle</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {[
-                        { id: 'monthly', label: 'Monthly', price: orderSummary.price, discount: '' },
-                        { id: 'yearly', label: 'Yearly', price: orderSummary.price * 0.9, discount: 'Save 10%' },
-                        { id: 'biennially', label: '2 Years', price: orderSummary.price * 0.8 * 2, discount: 'Save 20%' }
-                      ].map((option) => (
-                        <div 
-                          key={option.id}
-                          onClick={() => {
-                            setOrderSummary(prev => ({
-                              ...prev,
-                              cycle: option.id,
-                              cycleText: option.label,
-                              total: option.price + (selectedDomain?.price || 0)
-                            }))
-                          }}
-                          className={`p-4 border rounded-lg cursor-pointer transition ${orderSummary.cycle === option.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}`}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-medium">{option.label}</h4>
-                              <p className="text-gray-600 text-sm mt-1">{option.discount}</p>
+                      {['monthly', 'yearly', 'biennially'].map((cycle) => {
+                        const currencyPricing = hostingPlan.pricing.find(p => p.currency.code === selectedCurrency)
+                        if (!currencyPricing) return null
+                        
+                        const cycleData = currencyPricing[cycle]
+                        const cycleTextMap = {
+                          monthly: 'Monthly',
+                          yearly: 'Yearly',
+                          biennially: '2 Years'
+                        }
+                        
+                        return (
+                          <div 
+                            key={cycle}
+                            onClick={() => handleBillingCycleChange(cycle)}
+                            className={`p-4 border rounded-lg cursor-pointer transition ${orderSummary.cycle === cycle ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'}`}
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-medium">{cycleTextMap[cycle]}</h4>
+                                {cycleData.discount_percent && (
+                                  <p className="text-green-600 text-sm mt-1">Save {cycleData.discount_percent}</p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <span className="font-bold">{currencyPricing.currency.symbol}{parseFloat(cycleData.discount_price.replace(/[^\d.-]/g, '')).toFixed(2)}</span>
+                                {cycleData.discount_price !== cycleData.price && (
+                                  <span className="block text-sm text-gray-500 line-through">
+                                    {currencyPricing.currency.symbol}{parseFloat(cycleData.price.replace(/[^\d.-]/g, '')).toFixed(2)}
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                            <span className="font-bold">${option.price.toFixed(2)}</span>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   </div>
                   
@@ -710,10 +861,19 @@ export default function BillingPage() {
                   <div>
                     <h3 className="font-medium text-gray-800">Hosting Plan</h3>
                     <div className="flex justify-between mt-1">
-                      <span className="text-gray-600">{orderSummary.type} - {orderSummary.plan}</span>
-                      <span className="font-medium">${orderSummary.price.toFixed(2)}</span>
+                      <span className="text-gray-600">{orderSummary.type} - {orderSummary.name}</span>
+                      <span className="font-medium">
+                        {orderSummary.currency.symbol}{orderSummary.price.toFixed(2)}
+                      </span>
                     </div>
-                    <div className="text-sm text-gray-500 mt-1">{orderSummary.cycleText} Billing</div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      {orderSummary.cycleText} Billing
+                      {orderSummary.originalPrice > orderSummary.price && (
+                        <span className="line-through ml-2">
+                          {orderSummary.currency.symbol}{orderSummary.originalPrice.toFixed(2)}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   
                   <div>
@@ -723,7 +883,7 @@ export default function BillingPage() {
                         {useExistingDomain ? existingDomain || 'No domain selected' : selectedDomain?.name || 'No domain selected'}
                       </span>
                       <span className="font-medium">
-                        {selectedDomain ? `$${selectedDomain.price.toFixed(2)}` : '$0.00'}
+                        {selectedDomain ? `${orderSummary.currency.symbol}${selectedDomain.price.toFixed(2)}` : `${orderSummary.currency.symbol}0.00`}
                       </span>
                     </div>
                     <div className="text-sm text-gray-500 mt-1">
@@ -734,7 +894,7 @@ export default function BillingPage() {
                   <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between font-bold text-lg">
                       <span>Total</span>
-                      <span>${orderSummary.total.toFixed(2)}</span>
+                      <span>{orderSummary.currency.symbol}{orderSummary.total.toFixed(2)}</span>
                     </div>
                     <div className="text-sm text-gray-500 mt-1">
                       {orderSummary.cycleText === 'Monthly' ? 'Recurring monthly' : 
@@ -746,22 +906,12 @@ export default function BillingPage() {
                 <div className="mt-6 bg-blue-50 p-4 rounded-lg">
                   <h4 className="font-medium text-blue-800 mb-2">What's Included</h4>
                   <ul className="space-y-2 text-sm text-blue-700">
-                    <li className="flex items-start">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span>Free SSL Certificate</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span>24/7 Customer Support</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span>99.9% Uptime Guarantee</span>
-                    </li>
-                    <li className="flex items-start">
-                      <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span>30-Day Money-Back Guarantee</span>
-                    </li>
+                    {hostingPlan.features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <CheckCircleIcon className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
