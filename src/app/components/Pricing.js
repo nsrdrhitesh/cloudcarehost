@@ -1,14 +1,32 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Pricing() {
+  const router = useRouter();
   const [pricingPeriod, setPricingPeriod] = useState('yearly');
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [currencies, setCurrencies] = useState([]);
+
+  const planRoutes = {
+    2: '/hosting/shared',
+    6: '/hosting/wordpress',
+    10: '/hosting/vps'
+  };
+
+  const handlePlanSelect = (planId) => {
+    const route = planRoutes[planId];
+    if (route) {
+      router.push(route);
+    } else {
+      console.error('No route defined for plan ID:', planId);
+      // Optionally, you could redirect to a default page or show an error
+    }
+  };
 
   // Fetch currencies first
   useEffect(() => {
@@ -272,6 +290,7 @@ export default function Pricing() {
                 </ul>
 
                 <button
+                  onClick={() => handlePlanSelect(plan.id)}
                   className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300
                     ${plan.popular ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl' : 'bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:shadow-md'}`}
                 >
