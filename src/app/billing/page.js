@@ -1,10 +1,12 @@
 "use client"
+
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Loading from '@/app/components/Loading'
 import RazorpayScript from '@/app/components/RazorpayScript'
 import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon, StarIcon } from '@heroicons/react/24/outline'
+
 
 export default function BillingPage() {
   const router = useRouter()
