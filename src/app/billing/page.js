@@ -1,12 +1,10 @@
 "use client"
-
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Loading from '@/app/components/Loading'
 import RazorpayScript from '@/app/components/RazorpayScript'
 import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon, StarIcon } from '@heroicons/react/24/outline'
-
 
 export default function BillingPage() {
   const router = useRouter()
@@ -203,9 +201,9 @@ export default function BillingPage() {
       alert('Passwords do not match')
       return
     }
-
+  
     setLoading(true)
-
+    
     try {
       // Prepare order data
       const orderData = {
@@ -213,9 +211,9 @@ export default function BillingPage() {
         currency: orderSummary.currency.code,
         receipt: `order_${Date.now()}_${orderSummary.id}`
       }
-
+    
       console.log('Submitting order:', orderData) // Debug log
-
+    
       // First create an order on your server
       const orderResponse = await fetch('/api/razorpay', {
         method: 'POST',
@@ -224,23 +222,23 @@ export default function BillingPage() {
         },
         body: JSON.stringify(orderData)
       })
-
+    
       console.log('API response status:', orderResponse.status) // Debug log
-
+    
       // Check if response is OK
       if (!orderResponse.ok) {
         const errorData = await orderResponse.json()
         console.error('API error response:', errorData) // Debug log
         throw new Error(errorData.error || `Server returned ${orderResponse.status}`)
       }
-
+    
       const orderResult = await orderResponse.json()
       console.log('Order creation result:', orderResult) // Debug log
-
+      
       if (!orderResult.success) {
         throw new Error(orderResult.error || 'Failed to create payment order')
       }
-
+    
       // Prepare Razorpay options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
@@ -269,13 +267,13 @@ export default function BillingPage() {
           color: '#2563eb'
         }
       }
-
+    
       console.log('Razorpay options:', options) // Debug log
-
+    
       // Open Razorpay checkout
       const rzp = new window.Razorpay(options)
       rzp.open()
-
+      
       rzp.on('payment.failed', function(response) {
         console.error('Payment failed:', response) // Debug log
         alert(`Payment failed: ${response.error.description}`)
@@ -293,10 +291,6 @@ export default function BillingPage() {
   return (
       <main className="bg-gray-50 min-h-screen">
           <RazorpayScript />
-
-      <Suspense fallback={<Loading />}>
-        <BillingContent />
-      </Suspense>
 
       {/* Progress indicator */}
       <div className="bg-white shadow-sm">
