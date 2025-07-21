@@ -8,6 +8,7 @@ import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon, StarI
 
 export default function BillingPage() {
   const router = useRouter()
+  const [error, setError] = useState(null);
   const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -193,98 +194,308 @@ export default function BillingPage() {
   }
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-  e.preventDefault()
+  // const handleSubmit = async (e) => {
+  // e.preventDefault()
   
-  // Validate form
-  if (formData.password !== formData.confirmPassword) {
-    alert('Passwords do not match')
-    return
-  }
+  // // Validate form
+  // if (formData.password !== formData.confirmPassword) {
+  //   alert('Passwords do not match')
+  //   return
+  // }
 
-  setLoading(true)
+  // setLoading(true)
   
-  try {
-    // Prepare order data
-    const orderData = {
-      amount: orderSummary.total,
-      currency: orderSummary.currency.code,
-      receipt: `order_${Date.now()}_${orderSummary.id}`
-    }
+  // try {
+  //   // Prepare order data
+  //   const orderData = {
+  //     amount: orderSummary.total,
+  //     currency: orderSummary.currency.code,
+  //     receipt: `order_${Date.now()}_${orderSummary.id}`
+  //   }
 
-    console.log('Submitting order:', orderData) // Debug log
+  //   console.log('Submitting order:', orderData) // Debug log
 
-    // First create an order on your server
-    const orderResponse = await fetch('/api/razorpay', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(orderData)
-    })
+  //   // First create an order on your server
+  //   const orderResponse = await fetch('/api/razorpay', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify(orderData)
+  //   })
 
-    console.log('API response status:', orderResponse.status) // Debug log
+  //   console.log('API response status:', orderResponse.status) // Debug log
 
-    // Check if response is OK
-    if (!orderResponse.ok) {
-      const errorData = await orderResponse.json()
-      console.error('API error response:', errorData) // Debug log
-      throw new Error(errorData.error || `Server returned ${orderResponse.status}`)
-    }
+  //   // Check if response is OK
+  //   if (!orderResponse.ok) {
+  //     const errorData = await orderResponse.json()
+  //     console.error('API error response:', errorData) // Debug log
+  //     throw new Error(errorData.error || `Server returned ${orderResponse.status}`)
+  //   }
 
-    const orderResult = await orderResponse.json()
-    console.log('Order creation result:', orderResult) // Debug log
+  //   const orderResult = await orderResponse.json()
+  //   console.log('Order creation result:', orderResult) // Debug log
     
-    if (!orderResult.success) {
-      throw new Error(orderResult.error || 'Failed to create payment order')
-    }
+  //   if (!orderResult.success) {
+  //     throw new Error(orderResult.error || 'Failed to create payment order')
+  //   }
 
-    // Prepare Razorpay options
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
-      amount: orderResult.order.amount,
-      currency: orderResult.order.currency,
-      name: 'Your Hosting Company',
-      description: `${orderSummary.type} - ${orderSummary.name}`,
-      image: '/logo.png',
-      order_id: orderResult.order.id,
-      handler: function(response) {
-        console.log('Payment success:', response) // Debug log
-        alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`)
-        router.push('/success')
-      },
-      prefill: {
-        name: `${formData.firstName} ${formData.lastName}`,
+  //   // Prepare Razorpay options
+  //   const options = {
+  //     key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
+  //     amount: orderResult.order.amount,
+  //     currency: orderResult.order.currency,
+  //     name: 'Your Hosting Company',
+  //     description: `${orderSummary.type} - ${orderSummary.name}`,
+  //     image: '/logo.png',
+  //     order_id: orderResult.order.id,
+  //     handler: function(response) {
+  //       console.log('Payment success:', response) // Debug log
+  //       alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`)
+  //       router.push('/success')
+  //     },
+  //     prefill: {
+  //       name: `${formData.firstName} ${formData.lastName}`,
+  //       email: formData.email,
+  //       contact: formData.phone
+  //     },
+  //     notes: {
+  //       address: `${formData.street}, ${formData.city}, ${formData.country}`,
+  //       order_id: orderSummary.id,
+  //       domain: useExistingDomain ? existingDomain : selectedDomain?.name
+  //     },
+  //     theme: {
+  //       color: '#2563eb'
+  //     }
+  //   }
+
+  //   console.log('Razorpay options:', options) // Debug log
+
+  //   // Open Razorpay checkout
+  //   const rzp = new window.Razorpay(options)
+  //   rzp.open()
+    
+  //   rzp.on('payment.failed', function(response) {
+  //     console.error('Payment failed:', response) // Debug log
+  //     alert(`Payment failed: ${response.error.description}`)
+  //   })
+  // } catch (error) {
+  //   console.error('Full payment error:', error) // Debug log
+  //   alert(`Payment failed: ${error.message}`)
+  // } finally {
+  //   setLoading(false)
+  // }
+  // }
+  // Add this function to your component
+  const createOrderRecord = async () => {
+    try {
+      const orderData = {
+        plan_id: orderSummary.id,
+        domain_name: useExistingDomain ? existingDomain : selectedDomain?.name,
+        domain_type: useExistingDomain ? 'existing' : 'new',
+        billing_cycle: orderSummary.cycle,
+        server_location: serverLocation,
+        amount: orderSummary.total,
+        currency: orderSummary.currency.code,
+        payment_method: formData.paymentMethod,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
         email: formData.email,
-        contact: formData.phone
-      },
-      notes: {
-        address: `${formData.street}, ${formData.city}, ${formData.country}`,
-        order_id: orderSummary.id,
-        domain: useExistingDomain ? existingDomain : selectedDomain?.name
-      },
-      theme: {
-        color: '#2563eb'
+        phone: formData.phone,
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        country: formData.country,
+        postcode: formData.postcode,
+        account_password: formData.password
+      };
+
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create order record');
       }
+
+      return result.order_id;
+
+    } catch (error) {
+      console.error('Error creating order record:', error);
+      throw error;
+    }
+  };
+
+  // Update the handleSubmit function
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
     }
 
-    console.log('Razorpay options:', options) // Debug log
-
-    // Open Razorpay checkout
-    const rzp = new window.Razorpay(options)
-    rzp.open()
+    setLoading(true);
     
-    rzp.on('payment.failed', function(response) {
-      console.error('Payment failed:', response) // Debug log
-      alert(`Payment failed: ${response.error.description}`)
-    })
-  } catch (error) {
-    console.error('Full payment error:', error) // Debug log
-    alert(`Payment failed: ${error.message}`)
-  } finally {
-    setLoading(false)
-  }
-  }
+    try {
+      // Create order record in database first
+      const orderId = await createOrderRecord();
+      console.log('Order created with ID:', orderId);
+
+      // Prepare Razorpay order data
+      const orderData = {
+        amount: Math.round(orderSummary.total * 100), // Convert to paise
+        currency: orderSummary.currency.code,
+        receipt: orderId
+      };
+
+      // Create Razorpay order
+      const orderResponse = await fetch('/api/razorpay', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      if (!orderResponse.ok) {
+        const errorData = await orderResponse.json();
+        throw new Error(errorData.error || `Server returned ${orderResponse.status}`);
+      }
+
+      const orderResult = await orderResponse.json();
+      
+      if (!orderResult.success) {
+        throw new Error(orderResult.error || 'Failed to create payment order');
+      }
+
+      // Prepare Razorpay options
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
+        amount: orderResult.order.amount,
+        currency: orderResult.order.currency,
+        name: 'Your Hosting Company',
+        description: `${orderSummary.type} - ${orderSummary.name}`,
+        image: '/logo.png',
+        order_id: orderResult.order.id,
+        handler: async function(response) {
+          console.log('Payment success:', response);
+          
+          // Update order status to success
+          try {
+            const updateResponse = await fetch(`/api/orders/${orderId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                payment_status: 'success',
+                payment_id: response.razorpay_payment_id,
+                payment_response: response
+              })
+            });
+
+            const updateResult = await updateResponse.json();
+            
+            if (!updateResult.success) {
+              console.error('Failed to update order status:', updateResult.error);
+            }
+          } catch (updateError) {
+            console.error('Error updating order status:', updateError);
+          }
+
+          router.push(`/success?order_id=${orderId}`);
+        },
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          contact: formData.phone
+        },
+        notes: {
+          address: `${formData.street}, ${formData.city}, ${formData.country}`,
+          order_id: orderId,
+          domain: useExistingDomain ? existingDomain : selectedDomain?.name
+        },
+        theme: {
+          color: '#2563eb'
+        }
+      };
+
+      // Handle payment failure
+      options.modal = {
+        ondismiss: async function() {
+          // Update order status to failed if payment is dismissed
+          try {
+            const updateResponse = await fetch(`/api/orders/${orderId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                payment_status: 'failed',
+                payment_response: { reason: 'user_dismissed' }
+              })
+            });
+
+            const updateResult = await updateResponse.json();
+            
+            if (!updateResult.success) {
+              console.error('Failed to update order status:', updateResult.error);
+            }
+          } catch (updateError) {
+            console.error('Error updating order status:', updateError);
+          }
+        }
+      };
+
+      // Open Razorpay checkout
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+      
+      rzp.on('payment.failed', async function(response) {
+        console.error('Payment failed:', response);
+        
+        // Update order status to failed
+        try {
+          const updateResponse = await fetch(`/api/orders/${orderId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              payment_status: 'failed',
+              payment_id: response.error.metadata.payment_id,
+              payment_response: response.error
+            })
+          });
+
+          const updateResult = await updateResponse.json();
+          
+          if (!updateResult.success) {
+            console.error('Failed to update order status:', updateResult.error);
+          }
+        } catch (updateError) {
+          console.error('Error updating order status:', updateError);
+        }
+
+        alert(`Payment failed: ${response.error.description}`);
+      });
+
+    } catch (error) {
+      console.error('Full payment error:', error);
+      setError(error.message || 'Payment failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   if (loading || !orderSummary || !hostingPlan) return <Loading />
 
@@ -844,6 +1055,11 @@ export default function BillingPage() {
                   >
                     <LockClosedIcon className="w-4 h-4 mr-2" /> Complete Order
                   </button>
+                  {error && (
+                    <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                      {error}
+                    </div>
+                  )}
                 </div>
               </form>
             )}
