@@ -1,22 +1,12 @@
 "use client"
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Loading from '@/app/components/Loading'
 import RazorpayScript from '@/app/components/RazorpayScript'
 import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon, StarIcon } from '@heroicons/react/24/outline'
 
-// Main page wrapper with Suspense
 export default function BillingPage() {
-  return (
-    <Suspense fallback={<Loading />}>
-      <BillingContent />
-    </Suspense>
-  )
-}
-
-// All your existing component logic moved here
-function BillingContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
@@ -204,96 +194,96 @@ function BillingContent() {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    // Validate form
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match')
-      return
-    }
+  e.preventDefault()
   
-    setLoading(true)
-    
-    try {
-      // Prepare order data
-      const orderData = {
-        amount: orderSummary.total,
-        currency: orderSummary.currency.code,
-        receipt: `order_${Date.now()}_${orderSummary.id}`
-      }
-    
-      console.log('Submitting order:', orderData) // Debug log
-    
-      // First create an order on your server
-      const orderResponse = await fetch('/api/razorpay', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(orderData)
-      })
-    
-      console.log('API response status:', orderResponse.status) // Debug log
-    
-      // Check if response is OK
-      if (!orderResponse.ok) {
-        const errorData = await orderResponse.json()
-        console.error('API error response:', errorData) // Debug log
-        throw new Error(errorData.error || `Server returned ${orderResponse.status}`)
-      }
-    
-      const orderResult = await orderResponse.json()
-      console.log('Order creation result:', orderResult) // Debug log
-      
-      if (!orderResult.success) {
-        throw new Error(orderResult.error || 'Failed to create payment order')
-      }
-    
-      // Prepare Razorpay options
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
-        amount: orderResult.order.amount,
-        currency: orderResult.order.currency,
-        name: 'Your Hosting Company',
-        description: `${orderSummary.type} - ${orderSummary.name}`,
-        image: '/logo.png',
-        order_id: orderResult.order.id,
-        handler: function(response) {
-          console.log('Payment success:', response) // Debug log
-          alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`)
-          router.push('/success')
-        },
-        prefill: {
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          contact: formData.phone
-        },
-        notes: {
-          address: `${formData.street}, ${formData.city}, ${formData.country}`,
-          order_id: orderSummary.id,
-          domain: useExistingDomain ? existingDomain : selectedDomain?.name
-        },
-        theme: {
-          color: '#2563eb'
-        }
-      }
-    
-      console.log('Razorpay options:', options) // Debug log
-    
-      // Open Razorpay checkout
-      const rzp = new window.Razorpay(options)
-      rzp.open()
-      
-      rzp.on('payment.failed', function(response) {
-        console.error('Payment failed:', response) // Debug log
-        alert(`Payment failed: ${response.error.description}`)
-      })
-    } catch (error) {
-      console.error('Full payment error:', error) // Debug log
-      alert(`Payment failed: ${error.message}`)
-    } finally {
-      setLoading(false)
+  // Validate form
+  if (formData.password !== formData.confirmPassword) {
+    alert('Passwords do not match')
+    return
+  }
+
+  setLoading(true)
+  
+  try {
+    // Prepare order data
+    const orderData = {
+      amount: orderSummary.total,
+      currency: orderSummary.currency.code,
+      receipt: `order_${Date.now()}_${orderSummary.id}`
     }
+
+    console.log('Submitting order:', orderData) // Debug log
+
+    // First create an order on your server
+    const orderResponse = await fetch('/api/razorpay', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(orderData)
+    })
+
+    console.log('API response status:', orderResponse.status) // Debug log
+
+    // Check if response is OK
+    if (!orderResponse.ok) {
+      const errorData = await orderResponse.json()
+      console.error('API error response:', errorData) // Debug log
+      throw new Error(errorData.error || `Server returned ${orderResponse.status}`)
+    }
+
+    const orderResult = await orderResponse.json()
+    console.log('Order creation result:', orderResult) // Debug log
+    
+    if (!orderResult.success) {
+      throw new Error(orderResult.error || 'Failed to create payment order')
+    }
+
+    // Prepare Razorpay options
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
+      amount: orderResult.order.amount,
+      currency: orderResult.order.currency,
+      name: 'Your Hosting Company',
+      description: `${orderSummary.type} - ${orderSummary.name}`,
+      image: '/logo.png',
+      order_id: orderResult.order.id,
+      handler: function(response) {
+        console.log('Payment success:', response) // Debug log
+        alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`)
+        router.push('/success')
+      },
+      prefill: {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        contact: formData.phone
+      },
+      notes: {
+        address: `${formData.street}, ${formData.city}, ${formData.country}`,
+        order_id: orderSummary.id,
+        domain: useExistingDomain ? existingDomain : selectedDomain?.name
+      },
+      theme: {
+        color: '#2563eb'
+      }
+    }
+
+    console.log('Razorpay options:', options) // Debug log
+
+    // Open Razorpay checkout
+    const rzp = new window.Razorpay(options)
+    rzp.open()
+    
+    rzp.on('payment.failed', function(response) {
+      console.error('Payment failed:', response) // Debug log
+      alert(`Payment failed: ${response.error.description}`)
+    })
+  } catch (error) {
+    console.error('Full payment error:', error) // Debug log
+    alert(`Payment failed: ${error.message}`)
+  } finally {
+    setLoading(false)
+  }
   }
 
   if (loading || !orderSummary || !hostingPlan) return <Loading />
