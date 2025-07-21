@@ -53,5 +53,37 @@ export const queries = {
     SELECT id, code, name, symbol 
     FROM h_currencies
     ORDER BY code
+  `,
+
+  getPlansWithPricingByType: `
+    SELECT 
+      hp.id, hp.name, hp.description, hp.popular, hp.cta,
+      ht.title AS hosting_type, ht.description AS hosting_description,
+      GROUP_CONCAT(hpf.feature SEPARATOR '|||') AS features,
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'currency_code', hc.code,
+          'currency_name', hc.name,
+          'currency_symbol', hc.symbol,
+          'monthly_price', p.monthly_price,
+          'monthly_discount_price', p.monthly_discount_price,
+          'monthly_discount_percent', p.monthly_discount_percent,
+          'yearly_price', p.yearly_price,
+          'yearly_discount_price', p.yearly_discount_price,
+          'yearly_discount_percent', p.yearly_discount_percent,
+          'biennially_price', p.biennially_price,
+          'biennially_discount_price', p.biennially_discount_price,
+          'biennially_discount_percent', p.biennially_discount_percent
+        )
+      ) AS pricing
+    FROM h_plans hp
+    JOIN h_hosting_types ht ON hp.hosting_type_id = ht.id
+    LEFT JOIN h_plan_features hpf ON hp.id = hpf.plan_id
+    LEFT JOIN h_pricing p ON hp.id = p.plan_id
+    LEFT JOIN h_currencies hc ON p.currency_id = hc.id
+    WHERE ht.title = ?
+    GROUP BY hp.id
+    ORDER BY hp.id
   `
+  
 };

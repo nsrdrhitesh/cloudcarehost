@@ -4,7 +4,7 @@ import { queries } from '../lib/queries';
 
 export async function GET(request, { params }) {
   try {
-    const { id } = params;
+    const id = params.id;
     
     // Get plan details
     const [plan] = await query(queries.getPlanById, [id]);

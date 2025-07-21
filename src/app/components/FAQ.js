@@ -7,42 +7,50 @@ export default function FAQ() {
     {
       question: "What makes Cloud Care Host different from other hosting providers?",
       answer: "We offer enterprise-grade infrastructure at affordable prices with 24/7 expert support. Our proprietary caching technology ensures your website loads up to 3x faster than standard hosting solutions. Plus, we provide free daily backups, free SSL certificates, and a 99.9% uptime guarantee.",
-      icon: "⭐"
+      // icon: "⭐",
+      icon: ""
     },
     {
       question: "How does your 99.9% uptime guarantee work?",
       answer: "We monitor all servers continuously and maintain redundant systems. If we fall below 99.9% uptime in any given month (which rarely happens), we'll credit your account with 5% of your monthly fee for each hour of downtime, up to 100% of your monthly payment.",
-      icon: "⏱️"
+      // icon: "⏱️",
+      icon: ""
     },
     {
       question: "What security measures do you have in place?",
       answer: "Our security includes: DDoS protection, Web Application Firewall (WAF), malware scanning, automatic updates, isolated account environments, and 24/7 security monitoring. All plans include free SSL certificates to encrypt your data.",
-      icon: "🔒"
+      // icon: "🔒",
+      icon: ""
     },
     {
       question: "Can I upgrade or downgrade my plan later?",
       answer: "Absolutely! You can change plans anytime with just a few clicks in your control panel. We make the migration process seamless with no downtime for your website. Downgrades are applied at your next billing cycle.",
-      icon: "🔄"
+      // icon: "🔄",
+      icon: ""
     },
     {
       question: "Do you offer website migration services?",
       answer: "Yes! We provide free website migrations for all new customers. Our expert team will handle the entire process, typically completing migrations within 24-48 hours with zero downtime for your visitors.",
-      icon: "🚚"
+      // icon: "🚚",
+      icon: ""
     },
     {
       question: "What kind of support can I expect?",
       answer: "Our support team consists of hosting experts (not outsourced support) available 24/7/365 via live chat, phone, and ticket system. Average response time is under 5 minutes for critical issues. We also have an extensive knowledge base and video tutorials.",
-      icon: "👨‍💻"
+      // icon: "👨‍💻",
+      icon: ""
     },
     {
       question: "Is there a money-back guarantee?",
       answer: "We offer a 30-day money-back guarantee on all shared hosting plans. If you're not completely satisfied, we'll give you a full refund, no questions asked. For VPS and dedicated servers, we offer prorated refunds.",
-      icon: "💰"
+      // icon: "💰",
+      icon: ""
     },
     {
       question: "How do backups work?",
       answer: "We perform automatic daily backups of all accounts and retain them for 30 days. You can restore your site to any backup point with one click from your control panel. For added protection, we recommend maintaining your own backups as well.",
-      icon: "💾"
+      // icon: "💾",
+      icon: ""
     }
   ];
 

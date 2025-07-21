@@ -15,33 +15,33 @@ export default function Footer() {
     {
       title: "Hosting Solutions",
       items: [
-        { name: "Shared Hosting", url: "#" },
-        { name: "WordPress Hosting", url: "#" },
-        { name: "Cloud Hosting", url: "#" },
-        { name: "VPS Hosting", url: "#" },
-        { name: "Dedicated Server", url: "#" },
-        { name: "Reseller Hosting", url: "#" },
-        { name: "Ecommerce Hosting", url: "#" }
+        { name: "Shared Hosting", url: "/hosting/shared" },
+        { name: "WordPress Hosting", url: "/hosting/wordpress" },
+        // { name: "Cloud Hosting", url: "#" },
+        { name: "VPS Hosting", url: "/hosting/vps" },
+        { name: "Dedicated Server", url: "/hosting/dedicated" },
+        { name: "Reseller Hosting", url: "/hosting/reseller" },
+        { name: "Ecommerce Hosting", url: "/hosting/woocommerce" }
       ]
     },
     {
       title: "Services",
       items: [
-        { name: "Domain Names", url: "#" },
-        { name: "SSL Certificates", url: "#" },
-        { name: "Website Migration", url: "#" },
-        { name: "Backups & Security", url: "#" }
+        { name: "Domain Names", url: "/domain" },
+        { name: "SSL Certificates", url: "/ssl-certificates" },
+        { name: "Website Migration", url: "/website-migration" },
+        { name: "Backups & Security", url: "/backups-security" }
       ]
     },
     {
       title: "Company & Support",
       items: [
-        { name: "About Us", url: "#" },
-        { name: "Knowledge Base", url: "#" },
-        { name: "Tutorials", url: "#" },
-        { name: "Careers", url: "#" },
-        { name: "Blogs", url: "#" },
-        { name: "Contact Us", url: "#" }
+        { name: "About Us", url: "/about" },
+        { name: "Knowledge Base", url: "/knowledgebase" },
+        { name: "Tutorials", url: "/tutorials" },
+        { name: "Careers", url: "/careers" },
+        { name: "Blogs", url: "/blog" },
+        { name: "Contact Us", url: "/contact" }
       ]
     },
     // {
@@ -62,11 +62,11 @@ export default function Footer() {
   ];
 
   const legalLinks = [
-    { name: "Terms of Service", url: "#" },
-    { name: "Privacy Policy", url: "#" },
-    { name: "Sitemap", url: "#" },
-    { name: "Acceptable Use Policy", url: "#" },
-    { name: "Refund Policy", url: "#" }
+    { name: "Terms of Service", url: "/terms-of-service" },
+    { name: "Privacy Policy", url: "/privacy-policy" },
+    { name: "Sitemap", url: "/sitemap" },
+    { name: "Acceptable Use Policy", url: "/acceptable-use-policy" },
+    { name: "Refund Policy", url: "/refund-policy" }
   ];
 
   const [showBackToTop, setShowBackToTop] = useState(false);
