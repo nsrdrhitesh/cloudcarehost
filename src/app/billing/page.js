@@ -581,7 +581,7 @@ export default function BillingPage() {
                   ) : (
                       <div>
                         <Suspense>
-                          <form onSubmit={handleDomainSearch}>
+                          {/* <form onSubmit={handleDomainSearch}>
                             <label htmlFor="domainSearch" className="block text-sm font-medium text-gray-700 mb-1">
                               Search for a new domain
                             </label>
@@ -605,7 +605,7 @@ export default function BillingPage() {
                                 Search
                               </button>
                             </div>
-                          </form>
+                          </form> */}
                         </Suspense>
                         
                       
