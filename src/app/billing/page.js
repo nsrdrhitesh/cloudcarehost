@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 import Link from 'next/link'
 import Loading from '@/app/components/Loading'
 import RazorpayScript from '@/app/components/RazorpayScript'
@@ -578,34 +579,37 @@ export default function BillingPage() {
                       </p>
                     </div>
                   ) : (
-                    <div>
-                      <form onSubmit={handleDomainSearch}>
-                        <label htmlFor="domainSearch" className="block text-sm font-medium text-gray-700 mb-1">
-                          Search for a new domain
-                        </label>
-                        <div className="flex">
-                          <input
-                            type="text"
-                            id="domainSearch"
-                            className="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="yourdomain"
-                            value={domainSearch}
-                            onChange={(e) => setDomainSearch(e.target.value)}
-                          />
-                          <button 
-                            type="submit"
-                            className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition flex items-center"
-                            disabled={domainLoading}
-                          >
-                            {domainLoading ? (
-                              <ArrowPathIcon className="w-4 h-4 animate-spin mr-2" />
-                            ) : null}
-                            Search
-                          </button>
-                        </div>
-                      </form>
+                      <div>
+                        <Suspense>
+                          <form onSubmit={handleDomainSearch}>
+                            <label htmlFor="domainSearch" className="block text-sm font-medium text-gray-700 mb-1">
+                              Search for a new domain
+                            </label>
+                            <div className="flex">
+                              <input
+                                type="text"
+                                id="domainSearch"
+                                className="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="yourdomain"
+                                value={domainSearch}
+                                onChange={(e) => setDomainSearch(e.target.value)}
+                              />
+                              <button 
+                                type="submit"
+                                className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition flex items-center"
+                                disabled={domainLoading}
+                              >
+                                {domainLoading ? (
+                                  <ArrowPathIcon className="w-4 h-4 animate-spin mr-2" />
+                                ) : null}
+                                Search
+                              </button>
+                            </div>
+                          </form>
+                        </Suspense>
+                        
                       
-                      {domainOptions.length > 0 && (
+                        {domainOptions.length > 0 && (
                         <div className="mt-6">
                           <h3 className="text-lg font-medium text-gray-800 mb-3">Available Domains</h3>
                           <div className="space-y-3">
