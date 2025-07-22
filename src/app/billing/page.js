@@ -1,14 +1,12 @@
-import { Suspense } from 'react';
-import BillingClient from './BillingClient';
+"use client"
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import Loading from '@/app/components/Loading'
+import RazorpayScript from '@/app/components/RazorpayScript'
+import { CheckCircleIcon, ChevronRightIcon, ArrowPathIcon, LockClosedIcon, StarIcon } from '@heroicons/react/24/outline'
 
 export default function BillingPage() {
-HEAD
-  return (
-    <Suspense fallback={<div>Loading billing page...</div>}>
-      <BillingClient />
-    </Suspense>
-  );
-}
   const router = useRouter()
   const [error, setError] = useState(null);
   const searchParams = useSearchParams()
@@ -1140,4 +1138,3 @@ HEAD
     </main>
   )
 }
- 16085dc653ec859e3677d9fc250719cc84f24644
