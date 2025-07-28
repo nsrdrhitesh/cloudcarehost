@@ -12,15 +12,15 @@ export async function GET(request) {
     const search = searchParams.get('search');
     const featured = searchParams.get('featured');
     const offset = (page - 1) * limit;
-    console.log(tag);
-    console.log(category);
 
     let posts = [];
     let totalCount = 0;
 
+    console.log("Fetching posts with parameters:",featured)
     if (featured) {
-      
-      posts = await query(queries.getFeaturedPosts, [limit]);
+      console.log("Running getFeaturedPosts query:", queries.getFeaturedPost);
+      posts = await query(queries.getFeaturedPost, [limit]);
+      console.log("Featured posts fetched:", posts);
       totalCount = posts.length;
     } else if (category) {
       const [postRows, countRows] = await Promise.all([

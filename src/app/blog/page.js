@@ -19,6 +19,7 @@ async function getCategories() {
 
 async function getFeaturedPost() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts?featured=true&limit=1`, { next: { revalidate: 60 } });
+  console.log(res);
   if (!res.ok) throw new Error('Failed to fetch featured post');
   const data = await res.json();
   return data.posts[0];
