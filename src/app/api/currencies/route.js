@@ -1,5 +1,5 @@
-import { query } from '../hosting/lib/db';
-import { queries } from '../hosting/lib/queries';
+import { query } from '../lib/db';
+import { queries } from '../lib/queries';
 
 export async function GET() {
   try {

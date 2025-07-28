@@ -1,4 +1,4 @@
-import { query } from '../../hosting/lib/db';
+import { query } from '../../lib/db';
 
 export async function PUT(request, { params }) {
   try {

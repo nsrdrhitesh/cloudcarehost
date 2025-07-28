@@ -1,6 +1,6 @@
 // src/app/api/hosting/route.js
-import { query } from './lib/db';
-import { queries } from './lib/queries';
+import { query } from '../lib/db';
+import { queries } from '../lib/queries';
 
 export async function GET(request) {
   try {

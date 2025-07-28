@@ -1,9 +1,10 @@
 // src/app/api/hosting/[id]/route.js
-import { query } from '../lib/db';
-import { queries } from '../lib/queries';
+import { query } from '../../lib/db';
+import { queries } from '../../lib/queries';
 
-export async function GET(request, { params }) {
+export async function GET(request,context) {
   try {
+    const params = await context.params;
     const id = params.id;
     
     // Get plan details

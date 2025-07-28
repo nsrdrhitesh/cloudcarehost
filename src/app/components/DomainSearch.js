@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { FaSearch, FaSpinner } from 'react-icons/fa';
-import { checkDomainAvailability } from '../api/hosting/lib/domain';
+import { checkDomainAvailability } from '../api/lib/domain';
 import DomainCard from './DomainCard';
 
 export default function DomainSearch() {
