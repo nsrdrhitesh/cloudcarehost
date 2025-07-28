@@ -21,7 +21,6 @@ export default async function CategoryPage({ params }) {
 
   const { data } = await getCategoryData(categorySlug);
   const { category, subcategories, popularArticles, videoTutorials } = data;
-  console.log('Category Data:', { category, subcategories, popularArticles, videoTutorials });
   return (
     <main>
       <CategoryHeader 

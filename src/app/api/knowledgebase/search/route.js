@@ -28,8 +28,6 @@ export async function GET(request) {
       query(queries.searchFAQs, [searchTerm, searchTerm])
     ]);
 
-    console.log(articles, categories, tutorials, faqs);
-
     return NextResponse.json({
       success: true,
       data: {
@@ -41,7 +39,6 @@ export async function GET(request) {
     });
 
   } catch (error) {
-    console.error('Search error:', error);
     return NextResponse.json(
       { 
         success: false, 
