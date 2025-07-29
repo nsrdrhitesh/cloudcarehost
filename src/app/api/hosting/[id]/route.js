@@ -1,5 +1,13 @@
 import { callWhmcsApi } from "../../lib/CallWHMCS";
 
+const HOSTING_TYPE_MAP = {
+  1: "shared",
+  2: "WordPress",
+  3: "VPS",
+  4: "Dedicated",
+  5: "Reseller"
+};
+
 async function getCurrencies() {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/currencies`);
@@ -36,7 +44,7 @@ export async function GET(_, context) {
 
     // Fetch currencies first
     const currencies = await getCurrencies();
-    console.log('Currencies:', currencies);
+
     const apiConfig = {
       identifier: process.env.PRODUCT_API_ID,
       secret: process.env.PRODUCT_API_SECRET,
@@ -63,7 +71,7 @@ export async function GET(_, context) {
         name: currencyCode, 
         symbol: currencyCode 
       };
-      console.log(currencies[currencyCode]);
+
       // Helper function to format price with currency
       const formatPrice = (price) => {
         // Special case for USD to add space between symbol and amount
@@ -120,8 +128,8 @@ export async function GET(_, context) {
         description: description,
         popular: false,
         cta: "Get Started",
-        hosting_type: "Shared Hosting",
-        hosting_description: description, // Using the same description for hosting
+        hosting_type: HOSTING_TYPE_MAP[plan.gid] || "Web Hosting",
+        hosting_description: description, 
         features: extractFeatures(plan.description),
         pricing
       }
