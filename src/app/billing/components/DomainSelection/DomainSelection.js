@@ -1,26 +1,116 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DomainSearch from './DomainSearch'
 import DomainOptions from './DomainOptions'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
+import { checkDomainAvailability } from '../../../api/lib/domain'
 
 export default function DomainSelection({
-  useExistingDomain,
-  setUseExistingDomain,
-  existingDomain,
-  setExistingDomain,
-  domainSearch,
-  setDomainSearch,
-  domainOptions,
-  domainLoading,
-  selectedDomain,
-  handleDomainSearch,
-  handleSelectDomain,
-  handleNextStep
+  onNextStep,
+  onDomainSelected
 }) {
-  const isContinueDisabled = (useExistingDomain && !existingDomain.trim()) || 
-                           (!useExistingDomain && !selectedDomain)
+  const [useExistingDomain, setUseExistingDomain] = useState(true)
+  const [existingDomain, setExistingDomain] = useState('')
+  const [domainSearch, setDomainSearch] = useState('')
+  const [domainResult, setDomainResult] = useState(null)
+  const [selectedDomain, setSelectedDomain] = useState(null)
+  const [domainLoading, setDomainLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [alternativeDomains, setAlternativeDomains] = useState([])
 
+  // Generate alternative domain options based on the searched domain
+  const generateAlternatives = (searchedDomain) => {
+    const domainWithoutTld = searchedDomain.replace(/\..+$/, '')
+    const currentTld = searchedDomain.match(/\.(.+)$/)?.[1] || 'com'
+    
+    // Common TLDs excluding the one already searched
+    const commonTlds = ['.com', '.net', '.org', '.io', '.co', '.info']
+      .filter(tld => tld !== `.${currentTld}`)
+    
+    return commonTlds.map(tld => ({
+      domain: `${domainWithoutTld}${tld}`,
+      price: (Math.random() * (17 - 13) + 13).toFixed(2),
+      status: 'available'
+    }))
+  }
+
+  const handleDomainSearch = async (e) => {
+    e.preventDefault()
+    setError(null)
+    
+    if (!domainSearch.trim()) {
+      setError('Please enter a domain name to search')
+      return
+    }
+
+    setDomainLoading(true)
+    try {
+      const result = await checkDomainAvailability(domainSearch)
+      
+      if (result.success) {
+        const searchedDomain = result.data.searchedDomain || domainSearch
+        setDomainResult({
+          data: {
+            ...result.data,
+            price: (Math.random() * (17 - 13) + 13).toFixed(2), // Add random price
+            searchedDomain
+          }
+        })
+        
+        // Always generate alternative domains
+        setAlternativeDomains(generateAlternatives(searchedDomain))
+
+        if (result.data.status === 'available') {
+          const domainWithPrice = {
+            domain: searchedDomain,
+            status: 'available',
+            price: result.data.price || (Math.random() * (17 - 13) + 13).toFixed(2)
+          }
+          setSelectedDomain(domainWithPrice)
+          onDomainSelected(domainWithPrice)
+        } else {
+          // Clear selection if domain is unavailable
+          setSelectedDomain(null)
+          onDomainSelected(null)
+        }
+      } else {
+        setError('Failed to check domain availability')
+      }
+    } catch (err) {
+      setError('An error occurred while checking domain availability')
+      console.error(err)
+    } finally {
+      setDomainLoading(false)
+    }
+  }
+
+  const handleSelectDomain = (domain) => {
+    setSelectedDomain(domain)
+    onDomainSelected(domain)
+  }
+
+  const handleAlternativeDomainSelect = (altDomain) => {
+    setSelectedDomain(altDomain)
+    onDomainSelected(altDomain)
+  }
+
+  const handleNextStep = () => {
+    if (useExistingDomain && !existingDomain.trim()) {
+      setError('Please enter your existing domain')
+      return
+    }
+    
+    if (!useExistingDomain && !selectedDomain) {
+      setError('Please select an available domain')
+      return
+    }
+
+    onNextStep()
+  }
+
+  const isContinueDisabled = (useExistingDomain && !existingDomain.trim()) || 
+                         (!useExistingDomain && (!selectedDomain || selectedDomain.status !== 'available'))
+  
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       <div className="p-6 border-b border-gray-200">
@@ -59,13 +149,20 @@ export default function DomainSelection({
                 placeholder="example.com"
                 value={existingDomain}
                 onChange={(e) => setExistingDomain(e.target.value)}
+                required
               />
               <button 
                 type="button"
                 className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition"
                 onClick={() => {
-                  // Add domain verification logic here if needed
-                  alert('Domain verification would happen here in a real app');
+                  setSelectedDomain({
+                    domain: existingDomain,
+                    status: 'existing'
+                  })
+                  onDomainSelected({
+                    domain: existingDomain,
+                    status: 'existing'
+                  })
                 }}
               >
                 Verify
@@ -76,19 +173,24 @@ export default function DomainSelection({
             </p>
           </div>
         ) : (
-          <DomainSearch
-            domainSearch={domainSearch}
-            setDomainSearch={setDomainSearch}
-            domainLoading={domainLoading}
-            handleDomainSearch={handleDomainSearch}
-          />
+          <>
+            <DomainSearch 
+              domainSearch={domainSearch}
+              setDomainSearch={setDomainSearch}
+              domainLoading={domainLoading}
+              handleDomainSearch={handleDomainSearch}
+            />
+            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          </>
         )}
         
-        {!useExistingDomain && domainOptions.length > 0 && (
+        {!useExistingDomain && domainResult && (
           <DomainOptions
-            domainOptions={domainOptions}
+            domainResult={domainResult}
             selectedDomain={selectedDomain}
             handleSelectDomain={handleSelectDomain}
+            alternativeDomains={alternativeDomains}
+            handleAlternativeDomainSelect={handleAlternativeDomainSelect}
           />
         )}
       </div>

@@ -200,10 +200,10 @@ export default function HostingPage() {
                 id="currency"
                 value={selectedCurrency}
                 onChange={(e) => setSelectedCurrency(e.target.value)}
-                className="bg-white border border-gray-300 rounded-md px-4 py-2"
+                className="bg-black border border-gray-300 rounded-md px-4 py-2 text-white"
               >
                 {availableCurrencies.map(currency => (
-                  <option key={currency} value={currency}>{currency}</option>
+                  <option key={currency} value={currency} className="text-black">{currency}</option>
                 ))}
               </select>
             </div>
