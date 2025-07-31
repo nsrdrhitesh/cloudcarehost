@@ -34,6 +34,21 @@ export default function DomainSelection({
     }))
   }
 
+  const handleExistingDomainChange = (e) => {
+  const value = e.target.value;
+  setExistingDomain(value);
+  
+  if (value.trim()) {
+    const domainObj = {
+      domain: value,
+      status: 'existing',
+      price: 0
+    };
+    setSelectedDomain(domainObj);
+    onDomainSelected(domainObj);
+  }
+};
+
   const handleDomainSearch = async (e) => {
     e.preventDefault()
     setError(null)
@@ -48,21 +63,22 @@ export default function DomainSelection({
       const result = await checkDomainAvailability(domainSearch)
       
       if (result.success) {
-        const searchedDomain = result.data.searchedDomain || domainSearch
+        const formattedDomain = result.data.searchedDomain || domainSearch;
         setDomainResult({
           data: {
             ...result.data,
             price: (Math.random() * (17 - 13) + 13).toFixed(2), // Add random price
-            searchedDomain
+            searchedDomain : formattedDomain
           }
         })
         
+        setSelectedDomain(result.data.searchedDomain || domainSearch);
         // Always generate alternative domains
-        setAlternativeDomains(generateAlternatives(searchedDomain))
+        setAlternativeDomains(generateAlternatives(formattedDomain))
 
         if (result.data.status === 'available') {
           const domainWithPrice = {
-            domain: searchedDomain,
+            domain: formattedDomain,
             status: 'available',
             price: result.data.price || (Math.random() * (17 - 13) + 13).toFixed(2)
           }

@@ -102,19 +102,15 @@ useEffect(() => {
   fetchHostingPlan()
 }, [searchParams, router])
 
-  // Handle domain selection
-  const handleDomainSelected = (domain) => {
+  // In DomainSelection.js
+const handleDomainSelected = (domain) => {
   setSelectedDomain(domain);
-  
-  // If we're selecting a new domain (not using existing)
   if (domain) {
     setUseExistingDomain(false);
-    setExistingDomain(''); // Clear existing domain field
-    
-    // Update order summary with complete domain info
+    setExistingDomain('');
     setOrderSummary(prev => ({
       ...prev,
-      domainName: domain.name || domain.domain,
+      domainName: domain.domain,
       domainPrice: domain.price || 0,
       total: prev.price + (domain.price || 0)
     }));
@@ -124,29 +120,20 @@ useEffect(() => {
 const handleExistingDomainChange = (e) => {
   const value = e.target.value;
   setExistingDomain(value);
-  
-  // When typing in existing domain, clear any selected domain
   if (value.trim()) {
     setSelectedDomain(null);
     setUseExistingDomain(true);
-    
-    // Update order summary
     setOrderSummary(prev => ({
       ...prev,
       domainName: value,
-      domainPrice: 0, // No cost for existing domains
+      domainPrice: 0,
       total: prev.price
     }));
   }
 };
-
   // Handle next step
   const handleNextStep = () => {
-    console.log('Continue button clicked')
-  console.log('Current step:', step)
-  console.log('Use existing domain:', useExistingDomain)
-  console.log('Existing domain value:', existingDomain)
-  console.log('Selected domain:', selectedDomain)
+
   if (step === 1) {
     const hasValidDomain = (useExistingDomain && existingDomain.trim()) || 
                          (!useExistingDomain && selectedDomain);
@@ -278,7 +265,6 @@ const handleExistingDomainChange = (e) => {
   const createClient = async () => {
     try {
       const clientData = {
-        action: 'AddClient',
         firstname: formData.firstName,
         lastname: formData.lastName,
         email: formData.email,
@@ -288,11 +274,10 @@ const handleExistingDomainChange = (e) => {
         postcode: formData.postcode,
         country: formData.country,
         phonenumber: formData.phone,
-        password2: formData.password,
-        responsetype: 'json'
+        password2: formData.password
       };
 
-      const response = await fetch('/api/whmcs', {
+      const response = await fetch('/api/client', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -307,6 +292,7 @@ const handleExistingDomainChange = (e) => {
       }
 
       return result.clientid;
+      console.log('Client created successfully:', result);
 
     } catch (error) {
       console.error('Error creating client:', error);
@@ -314,152 +300,145 @@ const handleExistingDomainChange = (e) => {
     }
   };
 
-  // Create order in WHMCS
-  const createOrder = async (clientId) => {
-    try {
-      const orderData = {
-        action: 'AddOrder',
-        clientid: clientId,
-        pid: [hostingPlan.id],
-        domain: [useExistingDomain ? existingDomain : selectedDomain?.name],
-        billingcycle: [orderSummary.cycle],
-        paymentmethod: formData.paymentMethod,
-        responsetype: 'json'
-      };
 
-      // Add domain registration details if new domain
-      if (!useExistingDomain && selectedDomain) {
-        orderData.domaintype = ['register'];
-        orderData.regperiod = [1]; // 1 year registration
-      }
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Validate passwords match
+  if (formData.password !== formData.confirmPassword) {
+    alert('Passwords do not match');
+    return;
+  }
 
-      const response = await fetch('/api/whmcs', {
+  setLoading(true);
+  setError(null);
+
+  try {
+    // 1. Create client
+    const clientResponse = await fetch('/api/client', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        postcode: formData.postcode,
+        country: formData.country,
+        phone: formData.phone,
+        password: formData.password
+      }),
+    });
+
+    if (!clientResponse.ok) {
+      throw new Error('Failed to create client');
+    }
+
+    const clientResult = await clientResponse.json();
+    console.log('Client creation:', clientResult);
+
+    
+    // 2. Create order
+    let domainName = '';
+    let domainType = '';
+    let regPeriod = 0;
+
+    if (useExistingDomain && existingDomain) {
+      domainName = existingDomain;
+      domainType = '';
+    } else if (selectedDomain) {
+      domainName = selectedDomain.domain;
+      domainType = 'register';
+      regPeriod = 1;
+    }else {
+      throw new Error('No domain selected');
+    }
+
+    console.log({useExistingDomain, existingDomain, selectedDomain, domainName, domainType, regPeriod});
+    const orderResponse = await fetch('/api/orders', {
+      method: 'POST', // MUST be POST
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        clientId: clientResult.data.clientid,
+        pid: hostingPlan.id,
+        domain: domainName,
+        billingcycle: orderSummary.cycle,
+        paymentMethod: formData.paymentMethod,
+        domainType: domainType,
+        regPeriod: regPeriod
+      }),
+    });
+
+    if (!orderResponse.ok) {
+      throw new Error('Failed to create order');
+    }
+
+    const orderResult = await orderResponse.json();
+    console.log('Order creation:', orderResult);
+
+    // 3. Handle payment
+    if (formData.paymentMethod === 'razorpay') {
+      const paymentResponse = await fetch('/api/razorpay', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify({
+          amount: Math.round(orderSummary.total * 100),
+          currency: orderSummary.currency.code,
+          receipt: orderResult.data.orderid
+        }),
       });
 
-      const result = await response.json();
-
-      if (result.result !== 'success') {
-        throw new Error(result.message || 'Failed to create order');
+      if (!paymentResponse.ok) {
+        throw new Error('Failed to create payment');
       }
 
-      return result;
+      const paymentResult = await paymentResponse.json();
+      console.log('Payment creation:', paymentResult);
 
-    } catch (error) {
-      console.error('Error creating order:', error);
-      throw error;
-    }
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Validate form
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-
-    setLoading(true);
-    
-    try {
-      // First create client in WHMCS
-      const clientId = await createClient();
-      
-      // Then create the order
-      const orderResult = await createOrder(clientId);
-
-      // If payment method is razorpay, proceed with payment
-      if (formData.paymentMethod === 'razorpay') {
-        // Prepare Razorpay order data
-        const orderData = {
-          amount: Math.round(orderSummary.total * 100), // Convert to paise
-          currency: orderSummary.currency.code,
-          receipt: orderResult.orderid
-        };
-
-        // Create Razorpay order
-        const orderResponse = await fetch('/api/razorpay', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(orderData)
-        });
-
-        if (!orderResponse.ok) {
-          const errorData = await orderResponse.json();
-          throw new Error(errorData.error || `Server returned ${orderResponse.status}`);
+      // Initialize Razorpay payment
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: paymentResult.data.amount,
+        currency: paymentResult.data.currency,
+        name: 'Your Company',
+        description: `Order for ${orderSummary.name}`,
+        order_id: paymentResult.data.id,
+        handler: (response) => {
+          router.push(`/success?order_id=${orderResult.data.orderid}`);
+        },
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          contact: formData.phone
+        },
+        theme: {
+          color: '#3399cc'
         }
+      };
 
-        const razorpayResult = await orderResponse.json();
-        
-        if (!razorpayResult.success) {
-          throw new Error(razorpayResult.error || 'Failed to create payment order');
-        }
-
-        // Prepare Razorpay options
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
-          amount: razorpayResult.order.amount,
-          currency: razorpayResult.order.currency,
-          name: 'Cloud Care Host',
-          description: `${orderSummary.type} - ${orderSummary.name}`,
-          image: '/logo.png',
-          order_id: razorpayResult.order.id,
-          handler: function(response) {
-            console.log('Payment success:', response);
-            // Redirect to success page with order details
-            router.push(`/success?order_id=${orderResult.orderid}`);
-          },
-          prefill: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
-            contact: formData.phone
-          },
-          notes: {
-            address: `${formData.street}, ${formData.city}, ${formData.country}`,
-            order_id: orderResult.orderid,
-            domain: useExistingDomain ? existingDomain : selectedDomain?.name
-          },
-          theme: {
-            color: '#2563eb'
-          }
-        };
-
-        // Handle payment failure
-        options.modal = {
-          ondismiss: function() {
-            alert('Payment was cancelled. Your order has been created but not paid.');
-          }
-        };
-
-        // Open Razorpay checkout
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-        
-        rzp.on('payment.failed', function(response) {
-          console.error('Payment failed:', response);
-          alert(`Payment failed: ${response.error.description}`);
-        });
-
-      } else {
-        // For non-razorpay payments, redirect to success page
-        router.push(`/success?order_id=${orderResult.orderid}`);
-      }
-
-    } catch (error) {
-      console.error('Full payment error:', error);
-      setError(error.message || 'Payment failed. Please try again.');
-    } finally {
-      setLoading(false);
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } else {
+      // For non-Razorpay payments
+      //router.push(`/success?order_id=${orderResult.data.orderid}`);
+      console.log('Order created successfully:', orderResult);
     }
-  };
+
+  } catch (error) {
+    console.error('Order processing error:', error);
+    setError(error.message || 'An error occurred during order processing');
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (loading || !orderSummary || !hostingPlan) return <Loading />
 
@@ -489,22 +468,22 @@ const handleExistingDomainChange = (e) => {
             
             {step === 2 && (
               <BillingForm
+                hostingPlan={hostingPlan}
+                selectedDomain={selectedDomain}
+                onBack={() => setStep(1)}
+                onOrderComplete={handleSubmit}
+                useExistingDomain={useExistingDomain}
+                existingDomain={existingDomain}
                 formData={formData}
                 handleInputChange={handleInputChange}
                 generatePassword={generatePassword}
-                handleSubmit={handleSubmit}
-                setStep={setStep}
-                error={error}
-                hostingPlan={hostingPlan}
                 orderSummary={orderSummary}
-                selectedCurrency={selectedCurrency}
                 handleCurrencyChange={handleCurrencyChange}
                 handleBillingCycleChange={handleBillingCycleChange}
                 serverLocation={serverLocation}
                 setServerLocation={setServerLocation}
-                selectedDomain={selectedDomain}
-                existingDomain={existingDomain}
-                useExistingDomain={useExistingDomain}  
+                isSubmitting={loading}
+                error={error} 
               />
             )}
           </div>

@@ -1,6 +1,6 @@
 "use client"
 import { useState } from 'react'
-import { ChevronRightIcon, LockClosedIcon, StarIcon,XCircleIcon,ArrowPathIcon} from '@heroicons/react/24/outline'
+import { ChevronRightIcon, LockClosedIcon, StarIcon, XCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import BillingDetails from './BillingDetails'
 import AccountSecurity from './AccountSecurity'
 import PaymentMethod from './PaymentMethod'
@@ -12,129 +12,18 @@ export default function BillingForm({
   onBack,
   onOrderComplete,
   useExistingDomain,
-  existingDomain
+  existingDomain,
+  formData,
+  handleInputChange,
+  generatePassword,
+  orderSummary,
+  handleCurrencyChange,
+  handleBillingCycleChange,
+  serverLocation,
+  setServerLocation,
+  isSubmitting,
+  error
 }) {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    street: '',
-    city: '',
-    state: '',
-    postcode: '',
-    country: 'United States',
-    password: '',
-    confirmPassword: '',
-    autoGeneratePassword: false,
-    paymentMethod: 'razorpay',
-    terms: false
-  })
-
-  const [orderSummary, setOrderSummary] = useState({
-    cycle: 'monthly',
-    currency: hostingPlan.pricing[0].currency.code
-  })
-
-  const [serverLocation, setServerLocation] = useState('us-east')
-  const [error, setError] = useState(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
-
-  const generatePassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()'
-    let password = ''
-    for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length))
-    }
-    setFormData(prev => ({
-      ...prev,
-      password,
-      confirmPassword: password
-    }))
-  }
-
-  const handleCurrencyChange = (currency) => {
-    setOrderSummary(prev => ({ ...prev, currency }))
-  }
-
-  const handleBillingCycleChange = (cycle) => {
-    setOrderSummary(prev => ({ ...prev, cycle }))
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError(null)
-    setIsSubmitting(true)
-
-    try {
-      // Validate form
-      if (!formData.terms) {
-        throw new Error('You must accept the terms and conditions')
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        throw new Error('Passwords do not match')
-      }
-
-      // Safely get domain name
-      const domainName = useExistingDomain 
-        ? existingDomain 
-        : selectedDomain?.domain || selectedDomain?.name;
-
-      if (!domainName) {
-        throw new Error('Please select or enter a domain');
-      }
-      // Prepare order data for WHMCS
-      const orderData = {
-        action: 'AddOrder',
-        clientid: '', 
-        pid: [hostingPlan.id],
-        domain: [domainName],
-        billingcycle: orderSummary.cycle,
-        paymentmethod: formData.paymentMethod,
-        firstname: formData.firstName,
-        lastname: formData.lastName,
-        email: formData.email,
-        address1: formData.street,
-        city: formData.city,
-        state: formData.state,
-        postcode: formData.postcode,
-        country: formData.country,
-        phonenumber: formData.phone,
-        password2: formData.password,
-        customfields: btoa(JSON.stringify({
-          server_location: serverLocation
-        })),
-        configoptions: btoa(JSON.stringify({
-          // Any configurable options
-        })),
-        responsetype: 'json'
-      }
-
-      // Create order in WHMCS
-      const result = await fetch(`/api/orders/`)
-
-      if (result.result === 'success') {
-        onOrderComplete(result)
-      } else {
-        throw new Error(result.message || 'Failed to create order')
-      }
-    } catch (error) {
-      console.error('Order submission error:', error)
-      setError(error.message || 'Failed to complete order. Please try again.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
   // Get current pricing based on selected currency and cycle
   const getCurrentPricing = () => {
     const currencyPricing = hostingPlan.pricing.find(
@@ -146,7 +35,7 @@ export default function BillingForm({
   const currentPricing = getCurrentPricing()
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md overflow-hidden">
+    <form onSubmit={onOrderComplete} className="bg-white rounded-xl shadow-md overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-start">

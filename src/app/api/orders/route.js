@@ -1,69 +1,57 @@
-import { query } from '../lib/db';
-import { queries } from '../lib/queries';
+import { callWhmcsApi } from "../lib/CallWHMCS"
 
 export async function POST(request) {
   try {
-    const orderData = await request.json();
-
-    // Validate required fields
-    if (!orderData.plan_id || !orderData.domain_name || !orderData.amount) {
-      return Response.json({
-        success: false,
-        error: 'Missing required fields'
-      }, { status: 400 });
+    const body = await request.json()
+    
+    const apiConfig = {
+      identifier: process.env.ORDER_API_ID,
+      secret: process.env.ORDER_API_SECRET,
+      responsetype: 'json',
+      action: 'AddOrder',
+      clientid: body.clientId,
+      pid: [body.pid],
+      domain: [body.domain],
+      billingcycle: [body.billingcycle],
+      paymentmethod: "razorpay"
     }
 
-    // Generate a unique order ID
-    const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
-    // Insert order into database
-    const result = await query(
-      `INSERT INTO h_orders (
-        order_id, plan_id, domain_name, domain_type, billing_cycle, 
-        server_location, amount, currency, payment_method, payment_status,
-        first_name, last_name, email, phone, street, city, state, 
-        country, postcode, account_password
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        orderId,
-        orderData.plan_id,
-        orderData.domain_name,
-        orderData.domain_type,
-        orderData.billing_cycle,
-        orderData.server_location,
-        orderData.amount,
-        orderData.currency,
-        orderData.payment_method,
-        'pending', // Initial status
-        orderData.first_name,
-        orderData.last_name,
-        orderData.email,
-        orderData.phone,
-        orderData.street,
-        orderData.city,
-        orderData.state,
-        orderData.country,
-        orderData.postcode,
-        orderData.account_password
-      ]
-    );
-
-    if (!result.insertId) {
-      throw new Error('Failed to create order');
+    // Add domain registration if needed
+    if (body.domainType === 'register') {
+      apiConfig.domaintype = ['register']
+      apiConfig.regperiod = [body.regPeriod || 1]
     }
 
-    // Return the order ID for reference
-    return Response.json({
-      success: true,
-      order_id: orderId,
-      db_id: result.insertId
-    });
+    console.log('API Config:', apiConfig)
+    const result = await callWhmcsApi(apiConfig)
+    
+    console.log('API Result:', result)
+    if (result.result !== 'success') {
+      return Response.json({ 
+        success: false, 
+        error: result.message || 'Order creation failed' 
+      }, { status: 400 })
+    }
+
+    return Response.json({ 
+      success: true, 
+      data: {
+        orderid: result.orderid,
+        serviceids: result.serviceids,
+        domainids: result.domainids,
+        invoiceid: result.invoiceid
+      }
+    }, { status: 200 })
 
   } catch (error) {
-    console.error('Error creating order:', error);
-    return Response.json({
-      success: false,
-      error: error.message || 'Failed to create order'
-    }, { status: 500 });
+    console.error('Orders API error:', error)
+    return Response.json({ 
+      success: false, 
+      error: 'Internal server error' 
+    }, { status: 500 })
   }
+}
+
+export function GET() {
+  return new Response('Method Not Allowed', { status: 405 });
 }
