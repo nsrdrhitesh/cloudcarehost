@@ -1,12 +1,13 @@
 "use client"
-import { ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronRightIcon, SparklesIcon } from '@heroicons/react/24/outline'
 
 export default function DomainOptions({ 
   domainResult, 
   selectedDomain, 
   handleSelectDomain,
   alternativeDomains,
-  handleAlternativeDomainSelect
+  handleAlternativeDomainSelect,
+  isGeneratingAlternatives
 }) {
   if (!domainResult) return null
 
@@ -19,7 +20,7 @@ export default function DomainOptions({
           onClick={() => domainResult.data.status === 'available' && handleSelectDomain({
             domain: domainResult.data.searchedDomain,
             status: 'available',
-            price: domainResult.data.price || 15.99 // Default price if not provided
+            price: domainResult.data.price || 15.99
           })}
           className={`p-4 border rounded-lg transition ${
             domainResult.data.status === 'available' 
@@ -43,14 +44,20 @@ export default function DomainOptions({
               )}
             </div>
           </div>
-          
-          
         </div>
         
-        {/* Always show alternative domains regardless of main domain availability */}
+        {/* Alternative domains section */}
         {alternativeDomains.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Alternative Options</h4>
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-medium text-gray-700">Alternative Options</h4>
+              {isGeneratingAlternatives && (
+                <span className="text-xs text-blue-600 flex items-center">
+                  <SparklesIcon className="w-3 h-3 mr-1" />
+                  Generating smart suggestions...
+                </span>
+              )}
+            </div>
             <div className="space-y-2">
               {alternativeDomains.map((altDomain, index) => (
                 <div 
@@ -60,12 +67,30 @@ export default function DomainOptions({
                     selectedDomain?.domain === altDomain.domain 
                       ? 'border-blue-500 bg-blue-50' 
                       : 'border-gray-200 hover:border-blue-300'
+                  } ${
+                    altDomain.isPremium ? 'border-purple-200 bg-purple-50' : ''
                   }`}
                 >
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">{altDomain.domain}</span>
                     <div className="flex items-center">
-                      <span className="text-green-600 font-medium">${altDomain.price}</span>
+                      <span className="font-medium">{altDomain.domain}</span>
+                      {altDomain.isAiGenerated && (
+                        <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                          AI Suggested
+                        </span>
+                      )}
+                      {altDomain.isPremium && (
+                        <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
+                          Premium
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center">
+                      <span className={`font-medium ${
+                        altDomain.isPremium ? 'text-purple-600' : 'text-green-600'
+                      }`}>
+                        ${altDomain.price}
+                      </span>
                       <ChevronRightIcon className="w-5 h-5 text-gray-400 ml-2" />
                     </div>
                   </div>

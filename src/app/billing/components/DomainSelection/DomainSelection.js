@@ -17,21 +17,96 @@ export default function DomainSelection({
   const [domainLoading, setDomainLoading] = useState(false)
   const [error, setError] = useState(null)
   const [alternativeDomains, setAlternativeDomains] = useState([])
+  const [isGeneratingAlternatives, setIsGeneratingAlternatives] = useState(false)
 
-  // Generate alternative domain options based on the searched domain
-  const generateAlternatives = (searchedDomain) => {
-    const domainWithoutTld = searchedDomain.replace(/\..+$/, '')
-    const currentTld = searchedDomain.match(/\.(.+)$/)?.[1] || 'com'
-    
-    // Common TLDs excluding the one already searched
-    const commonTlds = ['.com', '.net', '.org', '.io', '.co', '.info']
-      .filter(tld => tld !== `.${currentTld}`)
-    
-    return commonTlds.map(tld => ({
-      domain: `${domainWithoutTld}${tld}`,
-      price: (Math.random() * (17 - 13) + 13).toFixed(2),
-      status: 'available'
-    }))
+ // Generate AI-powered alternative domain options
+  const generateAlternatives = async (searchedDomain) => {
+    setIsGeneratingAlternatives(true)
+    try {
+      const domainWithoutTld = searchedDomain.replace(/\..+$/, '')
+      const currentTld = searchedDomain.match(/\.(.+)$/)?.[1] || 'com'
+      
+      // First generate creative variations using AI
+      const aiResponse = await fetch('/api/ai/domain-suggestions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          baseDomain: domainWithoutTld,
+          count: 10 // Request 10 suggestions
+        })
+      })
+      
+      const aiData = await aiResponse.json()
+      
+      if (!aiResponse.ok || !aiData.suggestions) {
+        throw new Error('Failed to get AI suggestions')
+      }
+      
+      // Common TLDs to check
+      const popularTlds = [
+        '.com', '.net', '.org', '.io', '.co', 
+        '.ai', '.dev', '.app', '.tech', '.site'
+      ]
+      
+      // Create a list of domains to check (AI suggestions + base with different TLDs)
+      const domainsToCheck = [
+            // Keep the original with different TLD
+            ...popularTlds.filter(tld => tld !== `.${currentTld}`)
+              .map(tld => `${domainWithoutTld}${tld}`),
+
+            // Add AI suggestions with popular TLDs
+            ...aiData.suggestions.slice(0, 5)
+              .flatMap(suggestion => popularTlds.map(tld => `${suggestion}${tld}`))
+          ].slice(0, 10);  // Limit to 10 domains to check
+      
+      // Check availability for all domains
+      const availabilityChecks = await Promise.all(
+        domainsToCheck.map(domain => checkDomainAvailability(domain))
+      );
+      // Process results
+      const availableDomains = availabilityChecks
+        .filter(result => result.success && result.data.status === 'available')
+        .map(result => ({
+          domain: result.data.searchedDomain,
+          price: (Math.random() * (17 - 13) + 13).toFixed(2),
+          status: 'available',
+          isAiGenerated: !result.data.searchedDomain.startsWith(domainWithoutTld)
+        }))
+      
+      // If we don't have enough available domains, add some premium suggestions
+      if (availableDomains.length < 5) {
+        const premiumTlds = ['.io', '.app', '.dev', '.ai', '.tech']
+        premiumTlds.forEach(tld => {
+          if (!availableDomains.some(d => d.domain.endsWith(tld))) {
+            availableDomains.push({
+              domain: `${domainWithoutTld}${tld}`,
+              price: (Math.random() * (25 - 20) + 20).toFixed(2),
+              status: 'premium',
+              isPremium: true
+            })
+          }
+        })
+      }
+      
+      return availableDomains.slice(0, 10) // Return max 10 domains
+    } catch (error) {
+      console.error('Error generating alternatives:', error)
+      // Fallback to basic generation if AI fails
+      const domainWithoutTld = searchedDomain.replace(/\..+$/, '')
+      const currentTld = searchedDomain.match(/\.(.+)$/)?.[1] || 'com'
+      const commonTlds = ['.com', '.net', '.org', '.io', '.co', '.info']
+        .filter(tld => tld !== `.${currentTld}`)
+      
+      return commonTlds.map(tld => ({
+        domain: `${domainWithoutTld}${tld}`,
+        price: (Math.random() * (17 - 13) + 13).toFixed(2),
+        status: 'available'
+      }))
+    } finally {
+      setIsGeneratingAlternatives(false)
+    }
   }
 
   const handleExistingDomainChange = (e) => {
@@ -73,8 +148,9 @@ export default function DomainSelection({
         })
         
         setSelectedDomain(result.data.searchedDomain || domainSearch);
-        // Always generate alternative domains
-        setAlternativeDomains(generateAlternatives(formattedDomain))
+        // Generate AI-powered alternative domains
+        const alternatives = await generateAlternatives(formattedDomain)
+        setAlternativeDomains(alternatives)
 
         if (result.data.status === 'available') {
           const domainWithPrice = {
