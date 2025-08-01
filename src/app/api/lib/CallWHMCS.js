@@ -8,13 +8,13 @@ export async function callWhmcsApi(apiConfig) {
   });
 
   if (!apiResponse.ok) {
-    throw new Error(`WHMCS API failed: ${apiResponse.status}`);
+    throw new Error('WHMCS API failed: ', apiResponse);
   }
 
   const json = await apiResponse.json();
 
   if (json.result !== 'success') {
-    throw new Error(`WHMCS responded with error: ${json.result}`);
+    throw new Error('WHMCS responded with error: ',json.result);
   }
 
   return json;

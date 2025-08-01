@@ -5,20 +5,14 @@ export async function POST(request) {
     const body = await request.json()
     
     const apiConfig = {
-      identifier: process.env.ORDER_API_ID,
-      secret: process.env.ORDER_API_SECRET,
+      identifier: process.env.BILLING_API_ID,
+      secret: process.env.BILLING_API_SECRET,
       responsetype: 'json',
-      action: 'AddOrder',
-      clientid: body.clientId,
-      pid: [body.pid],
-      domain: [body.domain],
-      billingcycle: [body.billingcycle],
-      paymentmethod: "razorpay"
-    }
-
-    if (body.domainType === 'register') {
-      apiConfig.domaintype = ['register']
-      apiConfig.regperiod = [body.regPeriod || 1]
+      action: 'AddInvoicePayment',
+      date: new Date().toISOString(),
+      transid: [body.transid],
+      gateway: [body.gateway],
+      invoiceid: [body.invoiceid]
     }
 
     const result = await callWhmcsApi(apiConfig)
@@ -32,12 +26,6 @@ export async function POST(request) {
 
     return Response.json({ 
       success: true, 
-      data: {
-        orderid: result.orderid,
-        serviceids: result.serviceids,
-        domainids: result.domainids,
-        invoiceid: result.invoiceid
-      }
     }, { status: 200 })
 
   } catch (error) {
@@ -47,8 +35,4 @@ export async function POST(request) {
       error: 'Internal server error' 
     }, { status: 500 })
   }
-}
-
-export function GET() {
-  return new Response('Method Not Allowed', { status: 405 });
 }

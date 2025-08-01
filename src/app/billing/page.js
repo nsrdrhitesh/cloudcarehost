@@ -46,7 +46,7 @@ useEffect(() => {
   const fetchHostingPlan = async () => {
     try {
       const planId = searchParams.get('id')
-      const cycle = searchParams.get('cycle') || 'yearly' // Get cycle from URL or default to yearly
+      const cycle = searchParams.get('cycle') || 'yearly' 
       
       if (!planId) {
         router.push('/hosting')
@@ -339,7 +339,6 @@ const handleExistingDomainChange = (e) => {
     }
 
     const clientResult = await clientResponse.json();
-    console.log('Client creation:', clientResult);
 
     
     // 2. Create order
@@ -358,7 +357,7 @@ const handleExistingDomainChange = (e) => {
       throw new Error('No domain selected');
     }
 
-    console.log({useExistingDomain, existingDomain, selectedDomain, domainName, domainType, regPeriod});
+
     const orderResponse = await fetch('/api/orders', {
       method: 'POST', // MUST be POST
       headers: {
@@ -380,7 +379,6 @@ const handleExistingDomainChange = (e) => {
     }
 
     const orderResult = await orderResponse.json();
-    console.log('Order creation:', orderResult);
 
     // 3. Handle payment
     if (formData.paymentMethod === 'razorpay') {
@@ -390,7 +388,7 @@ const handleExistingDomainChange = (e) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: Math.round(orderSummary.total * 100),
+          amount: Math.round(orderSummary.total),
           currency: orderSummary.currency.code,
           receipt: orderResult.data.orderid
         }),
@@ -406,13 +404,13 @@ const handleExistingDomainChange = (e) => {
       // Initialize Razorpay payment
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: paymentResult.data.amount,
-        currency: paymentResult.data.currency,
+        amount: paymentResult.order.amount,
+        currency: paymentResult.order.currency,
         name: 'Your Company',
         description: `Order for ${orderSummary.name}`,
-        order_id: paymentResult.data.id,
+        order_id: paymentResult.order.id,
         handler: (response) => {
-          router.push(`/success?order_id=${orderResult.data.orderid}`);
+          router.push(`/success?order_id=${orderResult.order.id}`);
         },
         prefill: {
           name: `${formData.firstName} ${formData.lastName}`,
