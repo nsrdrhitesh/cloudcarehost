@@ -1,98 +1,26 @@
 import CategoryHeader from '@/app/components/KnowledgeBase/CategoryHeader';
-// import CategoryHeader from '@/app/components/KnowledgeBase/CategoryHeader';
 import Breadcrumb from '@/app/components/KnowledgeBase/Breadcrumb';
 import ArticleCard from '@/app/components/KnowledgeBase/ArticleCard';
 import SubcategorySection from '@/app/components/KnowledgeBase/SubcategorySection';
 
-export default function CategoryPage({ params }) {
-  // Sample data - in a real app this would come from an API or CMS
-  const categoryData = {
-    'getting-started': {
-      title: "Getting Started",
-      description: "New to Cloud Care Host? Our comprehensive guides will help you set up your hosting account, connect your domain, and launch your website quickly and easily.",
-      icon: "🚀",
-      subcategories: [
-        {
-          name: "Account Setup",
-          description: "Create and configure your hosting account",
-          articles: [
-            {
-              title: "How to Create Your Hosting Account",
-              excerpt: "Step-by-step guide to signing up for Cloud Care Host services",
-              views: 2456,
-              lastUpdated: "2023-11-15",
-              link: "/knowledgebase/article/create-account"
-            },
-            {
-              title: "Verifying Your Email Address",
-              excerpt: "Why and how to verify your email for account security",
-              views: 1892,
-              lastUpdated: "2023-10-28",
-              link: "/knowledgebase/article/verify-email"
-            }
-          ]
-        },
-        {
-          name: "First Steps",
-          description: "What to do after creating your account",
-          articles: [
-            {
-              title: "Navigating Your Hosting Dashboard",
-              excerpt: "Tour of the control panel and key features",
-              views: 3210,
-              lastUpdated: "2023-12-05",
-              link: "/knowledgebase/article/hosting-dashboard"
-            },
-            {
-              title: "Changing Your Account Password",
-              excerpt: "How to update your password for better security",
-              views: 1567,
-              lastUpdated: "2023-09-18",
-              link: "/knowledgebase/article/change-password"
-            }
-          ]
-        }
-      ],
-      popularArticles: [
-        {
-          title: "How to Point Your Domain to Cloud Care Host",
-          excerpt: "Complete guide to updating DNS settings",
-          views: 5421,
-          lastUpdated: "2023-12-12",
-          link: "/knowledgebase/article/point-domain"
-        },
-        {
-          title: "Uploading Your Website Files via FTP",
-          excerpt: "Using FileZilla to transfer your website",
-          views: 3876,
-          lastUpdated: "2023-11-30",
-          link: "/knowledgebase/article/ftp-upload"
-        }
-      ],
-      videoTutorials: [
-        {
-          title: "Getting Started with cPanel",
-          duration: "12 min",
-          level: "Beginner",
-          thumbnail: "/assets/images/tutorial-thumb-1.jpg",
-          link: "/knowledgebase/tutorial/cpanel-intro"
-        },
-        {
-          title: "Creating Your First Email Account",
-          duration: "8 min",
-          level: "Beginner",
-          thumbnail: "/assets/images/tutorial-thumb-2.jpg",
-          link: "/knowledgebase/tutorial/create-email"
-        }
-      ]
-    }
+async function getCategoryData(categorySlug) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/knowledgebase/${categorySlug}`, {
+    next: { revalidate: 3600 } // Revalidate every hour
+  });
+  
+  if (!res.ok) {
+    throw new Error('Failed to fetch category data');
   }
+  
+  return res.json();
+}
 
-  const category = categoryData[params.category] || {
-    title: "Category Not Found",
-    description: "The requested category does not exist."
-  }
+export default async function CategoryPage({ params }) {
+  const resolvedParams = await params; 
+  const categorySlug = resolvedParams.category;
 
+  const { data } = await getCategoryData(categorySlug);
+  const { category, subcategories, popularArticles, videoTutorials } = data;
   return (
     <main>
       <CategoryHeader 
@@ -115,14 +43,14 @@ export default function CategoryPage({ params }) {
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-blue-900 mb-8">Popular in {category.title}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {category.popularArticles?.map((article, index) => (
+              {popularArticles.map((article, index) => (
                 <ArticleCard
-                  key={index}
+                  key={article.id}
                   title={article.title}
                   excerpt={article.excerpt}
                   views={article.views}
-                  lastUpdated={article.lastUpdated}
-                  link={article.link}
+                  lastUpdated={article.updated_at}
+                  link={`/knowledgebase/article/${article.slug}`}
                   delay={index * 0.1}
                   popular
                 />
@@ -134,9 +62,9 @@ export default function CategoryPage({ params }) {
       
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
-          {category.subcategories?.map((subcategory, index) => (
+          {subcategories.map((subcategory, index) => (
             <SubcategorySection
-              key={index}
+              key={subcategory.id}
               name={subcategory.name}
               description={subcategory.description}
               articles={subcategory.articles}
@@ -146,14 +74,14 @@ export default function CategoryPage({ params }) {
         </div>
       </section>
       
-      {category.videoTutorials && (
+      {videoTutorials.length > 0 && (
         <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl font-bold text-blue-900 mb-8 text-center">Video Tutorials</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-              {category.videoTutorials.map((tutorial, index) => (
+              {videoTutorials.map((tutorial, index) => (
                 <div 
-                  key={index}
+                  key={tutorial.id}
                   className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 animate-fadeIn"
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >

@@ -18,9 +18,10 @@ export default function DomainSearch({
             type="text"
             id="domainSearch"
             className="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="yourdomain"
+            placeholder="yourdomain.com"
             value={domainSearch}
             onChange={(e) => setDomainSearch(e.target.value)}
+            required
           />
           <button 
             type="submit"

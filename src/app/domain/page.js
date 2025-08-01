@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { FaSearch, FaGlobe, FaLock, FaSyncAlt, FaTags, FaShieldAlt, FaChartLine } from 'react-icons/fa';
+import DomainSearch from '../components/DomainSearch';
 
 export default function DomainPage() {
   const popularDomains = [
@@ -56,23 +57,8 @@ export default function DomainPage() {
             Search for your ideal domain and register it in seconds. Start your online journey today!
           </p>
           
-          {/* Domain Search Box */}
-          <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
-            <div className="flex flex-col md:flex-row">
-              <div className="relative flex-grow">
-                <input
-                  type="text"
-                  placeholder="Search for your perfect domain..."
-                  className="w-full px-5 py-4 text-gray-800 focus:outline-none"
-                />
-                <FaSearch className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              </div>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 md:px-8 transition duration-300">
-                Search
-              </button>
-            </div>
-          </div>
           
+          <DomainSearch/>
           <div className="mt-6 text-blue-200">
             <p>.com $12.99 | .net $14.99 | .org $11.99 | And many more...</p>
           </div>

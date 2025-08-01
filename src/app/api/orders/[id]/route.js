@@ -1,4 +1,4 @@
-import { query } from '../../hosting/lib/db';
+import { callWhmcsApi } from "../../lib/CallWHMCS";
 
 export async function PUT(request, { params }) {
   try {
@@ -45,6 +45,38 @@ export async function PUT(request, { params }) {
     return Response.json({
       success: false,
       error: error.message || 'Failed to update order status'
+    }, { status: 500 });
+  }
+}
+
+export async function Get(request) {
+  try{
+      const body = await request.json();
+
+      const apiConfig = {
+        identifier: process.env.ORDER_API_ID,
+        secret: process.env.ORDER_API_SECRET,
+        responsetype: 'json',
+        action: 'GetOrders',
+        id: body.orderId
+      };
+
+      const result = await callWhmcsApi(apiConfig);
+      if (result.result !== 'success') {
+        return Response.json({
+          success: false,
+          error: result.message || 'Failed to retrieve order'
+        }, { status: 400 });
+      }
+      return Response.json({
+        success: true,
+        data: result.orders || []
+      }, { status: 200 });
+  }catch (error) {
+    console.error('Error while getting Order:', error);
+    return Response.json({
+      success: false,
+      error: 'Internal server error'
     }, { status: 500 });
   }
 }

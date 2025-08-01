@@ -17,7 +17,6 @@ export default function BillingPage() {
   const [domainLoading, setDomainLoading] = useState(false)
   const [orderSummary, setOrderSummary] = useState(null)
   const [hostingPlan, setHostingPlan] = useState(null)
-  const [domainOptions, setDomainOptions] = useState([])
   const [domainSearch, setDomainSearch] = useState('')
   const [selectedDomain, setSelectedDomain] = useState(null)
   const [existingDomain, setExistingDomain] = useState('')
@@ -41,50 +40,132 @@ export default function BillingPage() {
     autoGeneratePassword: false
   })
 
-    // Fetch hosting plan data based on ID from URL
-  useEffect(() => {
-    const fetchHostingPlan = async () => {
-      try {
-        const planId = searchParams.get('id')
-        if (!planId) {
-          router.push('/hosting')
-          return
-        }
-        
-        const response = await fetch(`/api/hosting/${planId}`)
-        const data = await response.json()
-        
-        if (data.success) {
-          setHostingPlan(data.data)
-          // Initialize order summary with default values
-          const defaultPricing = data.data.pricing.find(p => p.currency.code === 'USD') || data.data.pricing[0]
-          setSelectedCurrency(defaultPricing.currency.code)
-          
-          setOrderSummary({
-            id: data.data.id,
-            name: data.data.name,
-            type: data.data.hosting_type,
-            cycle: 'yearly',
-            price: parseFloat(defaultPricing.yearly.discount_price.replace(/[^\d.-]/g, '')),
-            originalPrice: parseFloat(defaultPricing.yearly.price.replace(/[^\d.-]/g, '')),
-            cycleText: 'Yearly',
-            domainPrice: 14.99,
-            total: parseFloat(defaultPricing.yearly.discount_price.replace(/[^\d.-]/g, '')) + 14.99,
-            currency: defaultPricing.currency
-          })
-        } else {
-          router.push('/hosting')
-        }
-      } catch (error) {
-        console.error('Error fetching hosting plan:', error)
+
+  // Fetch hosting plan data based on ID from URL
+useEffect(() => {
+  const fetchHostingPlan = async () => {
+    try {
+      const planId = searchParams.get('id')
+      const cycle = searchParams.get('cycle') || 'yearly' 
+      
+      if (!planId) {
         router.push('/hosting')
-      } finally {
-        setLoading(false)
+        return
       }
+      
+      const response = await fetch(`/api/hosting/${planId}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setHostingPlan(data.data)
+        const defaultPricing = data.data.pricing.find(p => p.currency.code === 'USD') || data.data.pricing[0]
+        setSelectedCurrency(defaultPricing.currency.code)
+        
+        const getNumericPrice = (priceStr) => {
+          const numericValue = parseFloat(priceStr.replace(/[^\d.-]/g, ''))
+          return isNaN(numericValue) ? 0 : numericValue
+        }
+
+        // Use the cycle from URL params
+        const cyclePrice = getNumericPrice(defaultPricing[cycle].discount_price)
+        const originalPrice = getNumericPrice(defaultPricing[cycle].price)
+        
+        const cycleTextMap = {
+          monthly: 'Monthly',
+          yearly: 'Yearly',
+          biennially: '2 Years'
+        }
+        
+        setOrderSummary({
+          id: data.data.id,
+          name: data.data.name,
+          type: data.data.hosting_type,
+          cycle: cycle, // Use the cycle from URL
+          price: cyclePrice,
+          originalPrice: originalPrice,
+          cycleText: cycleTextMap[cycle],
+          domainPrice: 0,
+          total: cyclePrice,
+          currency: defaultPricing.currency
+        })
+      } else {
+        router.push('/hosting')
+      }
+    } catch (error) {
+      console.error('Error fetching hosting plan:', error)
+      router.push('/hosting')
+    } finally {
+      setLoading(false)
     }
+  }
+  
+  fetchHostingPlan()
+}, [searchParams, router])
+
+  // In DomainSelection.js
+const handleDomainSelected = (domain) => {
+  setSelectedDomain(domain);
+  if (domain) {
+    setUseExistingDomain(false);
+    setExistingDomain('');
+    setOrderSummary(prev => ({
+      ...prev,
+      domainName: domain.domain,
+      domainPrice: domain.price || 0,
+      total: prev.price + (domain.price || 0)
+    }));
+  }
+};
+
+const handleExistingDomainChange = (e) => {
+  const value = e.target.value;
+  setExistingDomain(value);
+  if (value.trim()) {
+    setSelectedDomain(null);
+    setUseExistingDomain(true);
+    setOrderSummary(prev => ({
+      ...prev,
+      domainName: value,
+      domainPrice: 0,
+      total: prev.price
+    }));
+  }
+};
+  // Handle next step
+  const handleNextStep = () => {
+
+  if (step === 1) {
+    const hasValidDomain = (useExistingDomain && existingDomain.trim()) || 
+                         (!useExistingDomain && selectedDomain);
     
-    fetchHostingPlan()
-  }, [searchParams, router])
+    if (!hasValidDomain) {
+      setError('Please select or enter a domain');
+      return;
+    }
+
+    // Final sync before proceeding
+    if (useExistingDomain) {
+      setOrderSummary(prev => ({
+        ...prev,
+        domainName: existingDomain,
+        domainPrice: 0,
+        total: prev.price
+      }));
+    }
+  }
+  
+  setStep(step + 1);
+  setError(null);
+};
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }))
+  }
 
   // Handle currency change
   const handleCurrencyChange = (currencyCode) => {
@@ -114,17 +195,21 @@ export default function BillingPage() {
     if (!domainSearch.trim()) return
     
     setDomainLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      const extensions = ['.com', '.net', '.org', '.io', '.dev']
-      const results = extensions.map(ext => ({
-        name: domainSearch + ext,
-        available: Math.random() > 0.3,
-        price: 14.99 - Math.floor(Math.random() * 5)
-      }))
-      setDomainOptions(results)
+    try {
+      const response = await fetch(`/api/domain/check?domain=${domainSearch}`)
+      console.log('Domain search URL:', response)
+      const data = await response.json()
+      console.log('Domain check response:', data)
+      if (data.success) {
+        setDomainOptions(data.domains)
+      } else {
+        setError(data.error || 'Failed to check domain availability')
+      }
+    } catch (error) {
+      setError('Error checking domain availability')
+    } finally {
       setDomainLoading(false)
-    }, 1000)
+    }
   }
 
   // Handle domain selection
@@ -137,25 +222,6 @@ export default function BillingPage() {
     }))
   }
 
-  // Handle next step
-  const handleNextStep = () => {
-    if (step === 1) {
-      if ((useExistingDomain && !existingDomain) || (!useExistingDomain && !selectedDomain)) {
-        alert('Please select or enter a domain')
-        return
-      }
-    }
-    setStep(step + 1)
-  }
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
 
   // Generate random password
   const generatePassword = () => {
@@ -195,215 +261,182 @@ export default function BillingPage() {
     }))
   }
 
-  const createOrderRecord = async () => {
+  // Create client in WHMCS
+  const createClient = async () => {
     try {
-      const orderData = {
-        plan_id: orderSummary.id,
-        domain_name: useExistingDomain ? existingDomain : selectedDomain?.name,
-        domain_type: useExistingDomain ? 'existing' : 'new',
-        billing_cycle: orderSummary.cycle,
-        server_location: serverLocation,
-        amount: orderSummary.total,
-        currency: orderSummary.currency.code,
-        payment_method: formData.paymentMethod,
-        first_name: formData.firstName,
-        last_name: formData.lastName,
+      const clientData = {
+        firstname: formData.firstName,
+        lastname: formData.lastName,
         email: formData.email,
-        phone: formData.phone,
-        street: formData.street,
+        address1: formData.street,
         city: formData.city,
         state: formData.state,
-        country: formData.country,
         postcode: formData.postcode,
-        account_password: formData.password
+        country: formData.country,
+        phonenumber: formData.phone,
+        password2: formData.password
       };
 
-      const response = await fetch('/api/orders', {
+      const response = await fetch('/api/client', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify(clientData)
       });
 
       const result = await response.json();
 
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create order record');
+      if (result.result !== 'success') {
+        throw new Error(result.message || 'Failed to create client');
       }
 
-      return result.order_id;
+      return result.clientid;
+      console.log('Client created successfully:', result);
 
     } catch (error) {
-      console.error('Error creating order record:', error);
+      console.error('Error creating client:', error);
       throw error;
     }
   };
 
-  // Update the handleSubmit function
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Validate form
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
+  e.preventDefault();
+  
+  // Validate passwords match
+  if (formData.password !== formData.confirmPassword) {
+    alert('Passwords do not match');
+    return;
+  }
+
+  setLoading(true);
+  setError(null);
+
+  try {
+    // 1. Create client
+    const clientResponse = await fetch('/api/client', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        street: formData.street,
+        city: formData.city,
+        state: formData.state,
+        postcode: formData.postcode,
+        country: formData.country,
+        phone: formData.phone,
+        password: formData.password
+      }),
+    });
+
+    if (!clientResponse.ok) {
+      throw new Error('Failed to create client');
     }
 
-    setLoading(true);
+    const clientResult = await clientResponse.json();
+
     
-    try {
-      // Create order record in database first
-      const orderId = await createOrderRecord();
-      console.log('Order created with ID:', orderId);
+    // 2. Create order
+    let domainName = '';
+    let domainType = '';
+    let regPeriod = 0;
 
-      // Prepare Razorpay order data
-      const orderData = {
-        amount: Math.round(orderSummary.total * 100), // Convert to paise
-        currency: orderSummary.currency.code,
-        receipt: orderId
-      };
+    if (useExistingDomain && existingDomain) {
+      domainName = existingDomain;
+      domainType = '';
+    } else if (selectedDomain) {
+      domainName = selectedDomain.domain;
+      domainType = 'register';
+      regPeriod = 1;
+    }else {
+      throw new Error('No domain selected');
+    }
 
-      // Create Razorpay order
-      const orderResponse = await fetch('/api/razorpay', {
+
+    const orderResponse = await fetch('/api/orders', {
+      method: 'POST', // MUST be POST
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        clientId: clientResult.data.clientid,
+        pid: hostingPlan.id,
+        domain: domainName,
+        billingcycle: orderSummary.cycle,
+        paymentMethod: formData.paymentMethod,
+        domainType: domainType,
+        regPeriod: regPeriod
+      }),
+    });
+
+    if (!orderResponse.ok) {
+      throw new Error('Failed to create order');
+    }
+
+    const orderResult = await orderResponse.json();
+
+    // 3. Handle payment
+    if (formData.paymentMethod === 'razorpay') {
+      const paymentResponse = await fetch('/api/razorpay', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(orderData)
+        body: JSON.stringify({
+          amount: Math.round(orderSummary.total),
+          currency: orderSummary.currency.code,
+          receipt: orderResult.data.orderid
+        }),
       });
 
-      if (!orderResponse.ok) {
-        const errorData = await orderResponse.json();
-        throw new Error(errorData.error || `Server returned ${orderResponse.status}`);
+      if (!paymentResponse.ok) {
+        throw new Error('Failed to create payment');
       }
 
-      const orderResult = await orderResponse.json();
-      
-      if (!orderResult.success) {
-        throw new Error(orderResult.error || 'Failed to create payment order');
-      }
+      const paymentResult = await paymentResponse.json();
+      console.log('Payment creation:', paymentResult);
 
-      // Prepare Razorpay options
+      // Initialize Razorpay payment
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
-        amount: 300,
-        // amount: orderResult.order.amount,
-        currency: orderResult.order.currency,
-        name: 'Cloud Care Host',
-        description: `${orderSummary.type} - ${orderSummary.name}`,
-        image: '/logo.png',
-        order_id: orderResult.order.id,
-        handler: async function(response) {
-          console.log('Payment success:', response);
-          
-          // Update order status to success
-          try {
-            const updateResponse = await fetch(`/api/orders/${orderId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                payment_status: 'success',
-                payment_id: response.razorpay_payment_id,
-                payment_response: response
-              })
-            });
-
-            const updateResult = await updateResponse.json();
-            
-            if (!updateResult.success) {
-              console.error('Failed to update order status:', updateResult.error);
-            }
-          } catch (updateError) {
-            console.error('Error updating order status:', updateError);
-          }
-
-          router.push(`/success?order_id=${orderId}`);
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: paymentResult.order.amount,
+        currency: paymentResult.order.currency,
+        name: 'Your Company',
+        description: `Order for ${orderSummary.name}`,
+        order_id: paymentResult.order.id,
+        handler: (response) => {
+          router.push(`/success?order_id=${orderResult.order.id}`);
         },
         prefill: {
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
           contact: formData.phone
         },
-        notes: {
-          address: `${formData.street}, ${formData.city}, ${formData.country}`,
-          order_id: orderId,
-          domain: useExistingDomain ? existingDomain : selectedDomain?.name
-        },
         theme: {
-          color: '#2563eb'
+          color: '#3399cc'
         }
       };
 
-      // Handle payment failure
-      options.modal = {
-        ondismiss: async function() {
-          // Update order status to failed if payment is dismissed
-          try {
-            const updateResponse = await fetch(`/api/orders/${orderId}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                payment_status: 'failed',
-                payment_response: { reason: 'user_dismissed' }
-              })
-            });
-
-            const updateResult = await updateResponse.json();
-            
-            if (!updateResult.success) {
-              console.error('Failed to update order status:', updateResult.error);
-            }
-          } catch (updateError) {
-            console.error('Error updating order status:', updateError);
-          }
-        }
-      };
-
-      // Open Razorpay checkout
       const rzp = new window.Razorpay(options);
       rzp.open();
-      
-      rzp.on('payment.failed', async function(response) {
-        console.error('Payment failed:', response);
-        
-        // Update order status to failed
-        try {
-          const updateResponse = await fetch(`/api/orders/${orderId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              payment_status: 'failed',
-              payment_id: response.error.metadata.payment_id,
-              payment_response: response.error
-            })
-          });
-
-          const updateResult = await updateResponse.json();
-          
-          if (!updateResult.success) {
-            console.error('Failed to update order status:', updateResult.error);
-          }
-        } catch (updateError) {
-          console.error('Error updating order status:', updateError);
-        }
-
-        alert(`Payment failed: ${response.error.description}`);
-      });
-
-    } catch (error) {
-      console.error('Full payment error:', error);
-      setError(error.message || 'Payment failed. Please try again.');
-    } finally {
-      setLoading(false);
+    } else {
+      // For non-Razorpay payments
+      //router.push(`/success?order_id=${orderResult.data.orderid}`);
+      console.log('Order created successfully:', orderResult);
     }
-  };
+
+  } catch (error) {
+    console.error('Order processing error:', error);
+    setError(error.message || 'An error occurred during order processing');
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (loading || !orderSummary || !hostingPlan) return <Loading />
 
@@ -423,30 +456,32 @@ export default function BillingPage() {
                 setExistingDomain={setExistingDomain}
                 domainSearch={domainSearch}
                 setDomainSearch={setDomainSearch}
-                domainOptions={domainOptions}
                 domainLoading={domainLoading}
                 selectedDomain={selectedDomain}
-                handleDomainSearch={handleDomainSearch}
-                handleSelectDomain={handleSelectDomain}
-                handleNextStep={handleNextStep}
+                onDomainSelected={handleDomainSelected} 
+                onNextStep={handleNextStep}
+                error={error}
               />
             )}
             
             {step === 2 && (
               <BillingForm
+                hostingPlan={hostingPlan}
+                selectedDomain={selectedDomain}
+                onBack={() => setStep(1)}
+                onOrderComplete={handleSubmit}
+                useExistingDomain={useExistingDomain}
+                existingDomain={existingDomain}
                 formData={formData}
                 handleInputChange={handleInputChange}
                 generatePassword={generatePassword}
-                handleSubmit={handleSubmit}
-                setStep={setStep}
-                error={error}
-                hostingPlan={hostingPlan}
                 orderSummary={orderSummary}
-                selectedCurrency={selectedCurrency}
                 handleCurrencyChange={handleCurrencyChange}
                 handleBillingCycleChange={handleBillingCycleChange}
                 serverLocation={serverLocation}
                 setServerLocation={setServerLocation}
+                isSubmitting={loading}
+                error={error} 
               />
             )}
           </div>

@@ -1,138 +1,44 @@
 import BlogCard from '../components/BlogCard';
-// import BlogCard from '../components/BlogCard';
 import BlogSidebar from '../components/BlogSidebar';
 
-export default function BlogPage() {
-  const featuredPost = {
-    id: 1,
-    title: "How to Optimize Your WordPress Website for Maximum Performance",
-    excerpt: "Learn the essential techniques to speed up your WordPress site and improve user experience with our comprehensive performance optimization guide.",
-    date: "May 15, 2025",
-    readTime: "8 min read",
-    category: "WordPress",
-    image: "/assets/images/blog/featured.jpg",
-    author: {
-      name: "Sarah Johnson",
-      avatar: "/assets/images/blog/authors/sarah.jpg"
-    }
-  }
+async function getPosts(page = 1, limit = 10, category = null) {
+  const url = category
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts?page=${page}&limit=${limit}&category=${category}`
+    : `${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts?page=${page}&limit=${limit}`;
+  
+  const res = await fetch(url, { next: { revalidate: 60 } });
+  if (!res.ok) throw new Error('Failed to fetch posts');
+  return res.json();
+}
 
-  const blogPosts = [
-    {
-      id: 2,
-      title: "10 Essential Security Measures Every Website Owner Should Implement",
-      excerpt: "Protect your website from common threats with these must-have security practices.",
-      date: "April 28, 2025",
-      readTime: "6 min read",
-      category: "Security",
-      image: "/assets/images/blog/security.jpg"
-    },
-    {
-      id: 3,
-      title: "The Ultimate Guide to Choosing the Right Hosting Plan for Your Business",
-      excerpt: "Understand the differences between shared, VPS, and dedicated hosting to make the best choice.",
-      date: "April 20, 2025",
-      readTime: "10 min read",
-      category: "Hosting",
-      image: "/assets/images/blog/hosting.jpg"
-    },
-    {
-      id: 4,
-      title: "How to Migrate Your Website to a New Host Without Downtime",
-      excerpt: "Step-by-step guide to seamless website migration with zero downtime.",
-      date: "April 12, 2025",
-      readTime: "7 min read",
-      category: "Migration",
-      image: "/assets/images/blog/migration.jpg"
-    },
-    {
-      id: 5,
-      title: "Understanding SSL Certificates: Why Your Website Needs HTTPS",
-      excerpt: "Learn why SSL is crucial for security, SEO, and customer trust.",
-      date: "April 5, 2025",
-      readTime: "5 min read",
-      category: "Security",
-      image: "/assets/images/blog/ssl.jpg"
-    },
-    {
-      id: 6,
-      title: "Top 5 Website Builders Compared: Which One is Right for You?",
-      excerpt: "Detailed comparison of popular website builders to help you choose the best platform.",
-      date: "March 28, 2025",
-      readTime: "9 min read",
-      category: "Web Design",
-      image: "/assets/images/blog/builders.jpg"
-    },
-    {
-      id: 7,
-      title: "How to Set Up Email Hosting with Your Domain Name",
-      excerpt: "Professional email setup guide using your custom domain.",
-      date: "March 20, 2025",
-      readTime: "6 min read",
-      category: "Email",
-      image: "/assets/images/blog/email.jpg"
-    },
-    {
-      id: 8,
-      title: "The Benefits of Using a Content Delivery Network (CDN)",
-      excerpt: "How CDNs can dramatically improve your website's speed and reliability.",
-      date: "March 12, 2025",
-      readTime: "7 min read",
-      category: "Performance",
-      image: "/assets/images/blog/cdn.jpg"
-    },
-    {
-      id: 9,
-      title: "Ecommerce Hosting: What You Need to Know Before Launching Your Online Store",
-      excerpt: "Essential considerations for hosting an online store that converts.",
-      date: "March 5, 2025",
-      readTime: "8 min read",
-      category: "Ecommerce",
-      image: "/assets/images/blog/ecommerce.jpg"
-    },
-    {
-      id: 10,
-      title: "Backup Strategies: Protecting Your Website Data Effectively",
-      excerpt: "Implement these backup solutions to never lose your website data.",
-      date: "February 28, 2025",
-      readTime: "5 min read",
-      category: "Security",
-      image: "/assets/images/blog/backup.jpg"
-    },
-    {
-      id: 11,
-      title: "WordPress Maintenance Checklist: Keep Your Site Running Smoothly",
-      excerpt: "Monthly tasks to ensure your WordPress site stays secure and performs well.",
-      date: "February 20, 2025",
-      readTime: "6 min read",
-      category: "WordPress",
-      image: "/assets/images/blog/maintenance.jpg"
-    },
-    {
-      id: 12,
-      title: "How to Choose the Perfect Domain Name for Your Business",
-      excerpt: "Expert tips for selecting a domain name that strengthens your brand.",
-      date: "February 12, 2025",
-      readTime: "4 min read",
-      category: "Domains",
-      image: "/assets/images/blog/domains.jpg"
-    }
-  ]
+async function getCategories() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/categories`, { next: { revalidate: 3600 } });
+  if (!res.ok) throw new Error('Failed to fetch categories');
+  return res.json();
+}
 
-  const popularPosts = [
-    blogPosts[0],
-    blogPosts[2],
-    blogPosts[4],
-    blogPosts[6]
-  ]
+async function getFeaturedPost() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog/posts?featured=true&limit=1`, { next: { revalidate: 60 } });
+  console.log(res);
+  if (!res.ok) throw new Error('Failed to fetch featured post');
+  const data = await res.json();
+  return data.posts[0];
+}
 
-  const categories = [
-    { name: "WordPress", count: 8 },
-    { name: "Security", count: 12 },
-    { name: "Hosting", count: 15 },
-    { name: "Performance", count: 7 },
-    { name: "Ecommerce", count: 5 }
-  ]
+export default async function BlogPage({ searchParams }) {
+   const params = await searchParams; 
+  const page = params?.page || 1;
+  const limit = 4;
+  const category = params?.category || null;
+  
+  const [postsData, categories, featuredPost] = await Promise.all([
+    getPosts(page, limit, category),
+    getCategories(),
+    getFeaturedPost()
+  ]);
+
+  const { posts = [], pagination = {} } = postsData || {};
+  const popularPosts = Array.isArray(posts) ? posts.slice(0, 4) : [];
 
   return (
     <main>
@@ -148,11 +54,12 @@ export default function BlogPage() {
             <p className="text-xl md:text-2xl mb-8 opacity-90 animate-fadeIn delay-100">
               Expert tips, tutorials, and industry insights to help you succeed online
             </p>
+            
             <div className="relative max-w-md mx-auto animate-fadeIn delay-200">
               <input 
                 type="text" 
                 placeholder="Search articles..." 
-                className="w-full px-6 py-3 rounded-full text-white-800 focus:outline-none focus:ring-2 focus:ring-white-500"
+                className="w-full px-6 py-3 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,18 +72,32 @@ export default function BlogPage() {
       </section>
 
       {/* Featured Post */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-8">Featured Article</h2>
-          <div className="bg-gray-50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
-            <BlogCard 
-              post={featuredPost} 
-              isFeatured={true}
-              className="border-0"
-            />
+      {featuredPost && (
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-8">Featured Article</h2>
+            <div className="bg-gray-50 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300">
+              <BlogCard 
+                post={{
+                  ...featuredPost,
+                  category: featuredPost.category_name,
+                  date: new Date(featuredPost.published_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }),
+                  author: {
+                    name: featuredPost.author_name,
+                    avatar: featuredPost.author_avatar
+                  }
+                }} 
+                isFeatured={true}
+                className="border-0"
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Blog Grid */}
       <section className="py-16 bg-gray-50">
@@ -196,44 +117,93 @@ export default function BlogPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {blogPosts.map((post, index) => (
-                  <BlogCard 
-                    key={post.id} 
-                    post={post} 
-                    className="animate-fadeIn"
-                    style={{ animationDelay: `${0.1 + index * 0.05}s` }}
-                  />
-                ))}
+                {Array.isArray(posts) && posts.length > 0 ? (
+  posts.map((post, index) => (
+    <BlogCard 
+      key={post.id} 
+      post={{
+        ...post,
+        id: post.slug,
+        category: post.category_name,
+        date: new Date(post.published_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        author: post.author_name ? {
+          name: post.author_name,
+          avatar: post.author_avatar
+        } : null
+      }}
+      className="animate-fadeIn"
+      style={{ animationDelay: `${0.1 + index * 0.05}s` }}
+    />
+  ))
+              ) : (
+                  <p className="text-gray-500">No posts found.</p>
+                  )}
               </div>
 
               {/* Pagination */}
-              <div className="mt-12 flex justify-center">
-                <nav className="flex items-center space-x-2">
-                  <button className="w-10 h-10 flex items-center justify-center rounded-md bg-blue-600 text-white">
-                    1
-                  </button>
-                  <button className="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200">
-                    2
-                  </button>
-                  <button className="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200">
-                    3
-                  </button>
-                  <span className="px-2">...</span>
-                  <button className="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200">
-                    8
-                  </button>
-                  <button className="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </nav>
-              </div>
+              {pagination.totalPages > 1 && (
+                <div className="mt-12 flex justify-center">
+                  <nav className="flex items-center space-x-2">
+                    {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                      const pageNum = i + 1;
+                      return (
+                        <a
+                          key={pageNum}
+                          href={`?page=${pageNum}`}
+                          className={`w-10 h-10 flex items-center justify-center rounded-md ${
+                            pagination.page === pageNum 
+                              ? 'bg-blue-600 text-white' 
+                              : 'hover:bg-gray-200'
+                          }`}
+                        >
+                          {pageNum}
+                        </a>
+                      );
+                    })}
+                    {pagination.totalPages > 5 && (
+                      <>
+                        <span className="px-2">...</span>
+                        <a
+                          href={`?page=${pagination.totalPages}`}
+                          className="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200"
+                        >
+                          {pagination.totalPages}
+                        </a>
+                      </>
+                    )}
+                    {pagination.page < pagination.totalPages && (
+                      <a
+                        href={`?page=${parseInt(pagination.page) + 1}`}
+                        className="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </a>
+                    )}
+                  </nav>
+                </div>
+              )}
             </div>
 
             {/* Sidebar */}
             <div className="lg:w-1/3">
-              <BlogSidebar popularPosts={popularPosts} categories={categories} />
+              <BlogSidebar 
+                popularPosts={popularPosts.map(post => ({
+                  ...post,
+                  id: post.slug,
+                  date: new Date(post.published_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                  })
+                }))}
+                categories={categories} 
+              />
             </div>
           </div>
         </div>
@@ -259,5 +229,5 @@ export default function BlogPage() {
         </div>
       </section>
     </main>
-  )
+  );
 }

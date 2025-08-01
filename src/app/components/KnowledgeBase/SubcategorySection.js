@@ -18,8 +18,8 @@ export default function SubcategorySection({ name, description, articles, delay 
             title={article.title}
             excerpt={article.excerpt}
             views={article.views}
-            lastUpdated={article.lastUpdated}
-            link={article.link}
+            lastUpdated={article.updated_at}
+            link={`/knowledgebase/article/${article.slug}`}
             delay={index * 0.1}
           />
         ))}

@@ -1,30 +1,26 @@
 import Razorpay from 'razorpay'
 
 const razorpay = new Razorpay({
-  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1DP5mmOlF5G5ag',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || '4q1WjRibnE9YbBZ0hqV5Y9y8'
+  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
 })
 
 export async function POST(request) {
-  console.log('Razorpay API route hit') // Debug log
   
+  console.log(razorpay.key_id, razorpay.key_secret) // Debug log to check credentials
   try {
     const body = await request.json()
-    console.log('Request body:', body) // Debug log
 
     // Validate required fields
     if (!body.amount || !body.currency || !body.receipt) {
-      console.error('Missing required fields')
       return Response.json({
         success: false,
         error: 'Missing required fields (amount, currency, receipt)'
       }, { status: 400 })
     }
 
-    // Convert amount to paise (smallest currency unit)
     const amountInPaise = Math.round(Number(body.amount) * 100)
     
-    // Validate amount is positive
     if (amountInPaise <= 0) {
       console.error('Invalid amount')
       return Response.json({
@@ -37,7 +33,7 @@ export async function POST(request) {
     const options = {
       amount: amountInPaise,
       currency: body.currency,
-      receipt: body.receipt,
+      receipt: body.receipt+'',
       payment_capture: 1
     }
 
@@ -52,7 +48,7 @@ export async function POST(request) {
     })
 
   } catch (error) {
-    console.error('Full error:', error) // Detailed error log
+    console.error('Full error:', error) 
     console.error('Error details:', {
       message: error.message,
       code: error.code,
