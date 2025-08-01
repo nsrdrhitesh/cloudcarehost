@@ -64,9 +64,9 @@ export default function Pricing() {
         
         // Fetch all three plans in parallel
         const responses = await Promise.all([
+          fetch(`/api/hosting/1`),
           fetch(`/api/hosting/2`),
-          fetch(`/api/hosting/6`),
-          fetch(`/api/hosting/10`)
+          fetch(`/api/hosting/3`)
         ]);
 
         // Check if any response failed

@@ -9,6 +9,12 @@ export default function OrderSummary({
   existingDomain, 
   selectedDomain 
 }) {
+  // Calculate total including domain price
+  const calculateTotal = () => {
+    const hostingPrice = orderSummary.price || 0
+    const domainPrice = selectedDomain ? parseFloat(selectedDomain.price) : 0
+    return hostingPrice + domainPrice
+  }
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden sticky top-8">
       <div className="p-6 border-b border-gray-200">
@@ -19,7 +25,7 @@ export default function OrderSummary({
         <div className="space-y-4">
           <OrderItem 
             title="Hosting Plan"
-            value={`${orderSummary.type} - ${orderSummary.name}`}
+            value={`${hostingPlan.name} - ${hostingPlan.hosting_type}`}
             price={orderSummary.price}
             originalPrice={orderSummary.originalPrice > orderSummary.price ? orderSummary.originalPrice : null}
             currency={orderSummary.currency}
@@ -28,16 +34,18 @@ export default function OrderSummary({
           
           <OrderItem 
             title="Domain"
-            value={useExistingDomain ? existingDomain || 'No domain selected' : selectedDomain?.name || 'No domain selected'}
-            price={selectedDomain ? selectedDomain.price : 0}
+            value={useExistingDomain ? existingDomain || 'No domain selected' : selectedDomain?.domain || 'No domain selected'}
+            price={selectedDomain ? parseFloat(selectedDomain.price) : 0}
             currency={orderSummary.currency}
-            description={selectedDomain ? '1 year registration' : 'No domain selected'}
+            description={selectedDomain ? (
+              useExistingDomain ? 'Existing domain' : '1 year registration'
+            ) : 'No domain selected'}
           />
           
           <div className="border-t border-gray-200 pt-4">
             <div className="flex justify-between font-bold text-lg">
               <span>Total</span>
-              <span>{orderSummary.currency.symbol}{orderSummary.total.toFixed(2)}</span>
+              <span>{orderSummary.currency.symbol}{calculateTotal().toFixed(2)}</span>
             </div>
             <div className="text-sm text-gray-500 mt-1">
               {orderSummary.cycleText === 'Monthly' ? 'Recurring monthly' : 

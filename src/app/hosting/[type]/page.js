@@ -15,6 +15,7 @@ export default function HostingPage() {
   const [hostingData, setHostingData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [selectedCurrency, setSelectedCurrency] = useState('USD') // Default currency
 
   // Extract hosting type from URL
   const hostingType = decodeURIComponent(pathname.split('/').pop())
@@ -24,13 +25,12 @@ export default function HostingPage() {
     'shared': 'Shared Hosting',
     'wordpress': 'WordPress Hosting',
     'vps': 'VPS Hosting',
-    'dedicated': 'Dedicated Hosting',
-    'woocommerce': 'WooCommerce Hosting',
+    'dedicated': 'Dedicated Server',
     'reseller': 'Reseller Hosting'
   }
 
   // Get the proper API type name
-  const apiType = typeMap[hostingType.toLowerCase()] || hostingType
+  const apiType = hostingType
 
   // Default feature icons (can be customized per hosting type)
   const defaultFeatures = [
@@ -73,6 +73,10 @@ export default function HostingPage() {
         
         if (data.success) {
           setHostingData(data.data)
+          // Set default currency if available
+          if (data.data[0]?.pricing?.length > 0) {
+            setSelectedCurrency(data.data[0].pricing[0].currency.code)
+          }
         } else {
           setError('Failed to load hosting data')
         }
@@ -86,26 +90,23 @@ export default function HostingPage() {
     fetchHostingData()
   }, [apiType])
 
-  // Default pricing structure (can be customized per hosting type)
-    const getPricingStructure = (plan) => {
-    const basePrice = plan.id * 2 + 1; // Example deterministic calculation
+  // Get available currencies from the first plan's pricing
+  const availableCurrencies = hostingData?.[0]?.pricing?.map(p => p.currency.code) || ['USD']
+
+  // Get pricing for the selected currency and billing cycle
+  const getPlanPricing = (plan) => {
+    if (!plan.pricing || plan.pricing.length === 0) return null
+    
+    // Find pricing for selected currency
+    const currencyPricing = plan.pricing.find(p => p.currency.code === selectedCurrency)
+    if (!currencyPricing) return null
+    
     return {
-        monthly: { 
-        price: `$${(basePrice + 2).toFixed(2)}`,
-        discount: `$${(basePrice + 5).toFixed(2)}/mo when you renew`
-        },
-        yearly: { 
-        price: `$${(basePrice + 1).toFixed(2)}`,
-        discount: `$${(basePrice + 4).toFixed(2)}/mo when you renew`,
-        save: `${15 + (plan.id * 5)}%`
-        },
-        biennially: { 
-        price: `$${basePrice.toFixed(2)}`,
-        discount: `$${(basePrice + 3).toFixed(2)}/mo when you renew`,
-        save: `${25 + (plan.id * 5)}%`
-        }
+      monthly: currencyPricing.monthly,
+      yearly: currencyPricing.yearly,
+      biennially: currencyPricing.biennially
     }
-    }
+  }
 
   // Format hosting type for display
   const formatHostingType = (type) => {
@@ -192,6 +193,21 @@ export default function HostingPage() {
               Choose the perfect plan for your website. All plans include our 30-day money-back guarantee.
             </p>
             
+            {/* Currency Selector */}
+            <div className="mt-6">
+              <label htmlFor="currency" className="sr-only">Currency</label>
+              <select
+                id="currency"
+                value={selectedCurrency}
+                onChange={(e) => setSelectedCurrency(e.target.value)}
+                className="bg-black border border-gray-300 rounded-md px-4 py-2 text-white"
+              >
+                {availableCurrencies.map(currency => (
+                  <option key={currency} value={currency} className="text-black">{currency}</option>
+                ))}
+              </select>
+            </div>
+            
             {/* Billing Cycle Toggle */}
             <div className="mt-8 flex justify-center">
               <div className="inline-flex bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -210,13 +226,6 @@ export default function HostingPage() {
                     }`}
                   >
                     {option.label}
-                    {billingCycle === option.id && hostingData[0] && getPricingStructure(hostingData[0])[option.id]?.save && (
-                      <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
-                        billingCycle === option.id ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        Save {getPricingStructure(hostingData[0])[option.id].save}
-                      </span>
-                    )}
                   </button>
                 ))}
               </div>
@@ -225,7 +234,9 @@ export default function HostingPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {hostingData.map((plan, index) => {
-              const currentPricing = getPricingStructure(plan)[billingCycle]
+              const pricing = getPlanPricing(plan)
+              const currentPrice = pricing?.[billingCycle]
+              
               return (
                 <div 
                   key={index} 
@@ -242,14 +253,25 @@ export default function HostingPage() {
                     <h3 className="text-2xl font-bold text-blue-900 mb-2">{plan.name}</h3>
                     <p className="text-gray-600 mb-4">{plan.description}</p>
                     
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold text-blue-600">{currentPricing.price}</span>
-                      <span className="text-gray-500">/{billingCycle === 'monthly' ? 'mo' : billingCycle === 'yearly' ? 'yr' : '2 yrs'}</span>
-                      <p className="text-sm text-gray-500 mt-1">{currentPricing.discount}</p>
-                      {currentPricing.save && !plan.popular && (
-                        <p className="text-sm text-green-600 font-medium mt-1">Save {currentPricing.save}</p>
-                      )}
-                    </div>
+                    {currentPrice ? (
+                      <div className="mb-6">
+                        <span className="text-4xl font-bold text-blue-600">{currentPrice.price}</span>
+                        <span className="text-gray-500">/{billingCycle === 'monthly' ? 'mo' : billingCycle === 'yearly' ? 'yr' : '2 yrs'}</span>
+                        {currentPrice.discount_price !== currentPrice.price && (
+                          <>
+                            <p className="text-sm text-gray-500 mt-1">
+                              <span className="line-through">{currentPrice.price}</span>{' '}
+                              <span className="text-green-600">{currentPrice.discount_price}</span>
+                            </p>
+                            <p className="text-sm text-green-600 font-medium mt-1">
+                              Save {currentPrice.discount_percent}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="mb-6 text-gray-500">Pricing not available</div>
+                    )}
                     
                     <ul className="mb-8 space-y-3">
                       {plan.features.map((feature, idx) => (
@@ -269,7 +291,8 @@ export default function HostingPage() {
                           plan: plan.name.toLowerCase(), 
                           type: apiType,
                           cycle: billingCycle,
-                          id: plan.id // Add the plan ID here
+                          id: plan.id,
+                          currency: selectedCurrency
                         }
                       }}
                       className={`w-full block text-center py-3 rounded-lg font-bold transition ${

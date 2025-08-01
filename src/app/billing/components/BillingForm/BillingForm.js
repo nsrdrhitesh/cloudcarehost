@@ -1,27 +1,42 @@
 "use client"
-import { ChevronRightIcon, LockClosedIcon, StarIcon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
+import { ChevronRightIcon, LockClosedIcon, StarIcon, XCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import BillingDetails from './BillingDetails'
 import AccountSecurity from './AccountSecurity'
 import PaymentMethod from './PaymentMethod'
 import Link from 'next/link'
 
 export default function BillingForm({
+  hostingPlan,
+  selectedDomain,
+  onBack,
+  onOrderComplete,
+  useExistingDomain,
+  existingDomain,
   formData,
   handleInputChange,
   generatePassword,
-  handleSubmit,
-  setStep,
-  error,
-  hostingPlan,
   orderSummary,
-  selectedCurrency,
   handleCurrencyChange,
   handleBillingCycleChange,
   serverLocation,
-  setServerLocation
+  setServerLocation,
+  isSubmitting,
+  error
 }) {
+  // Get current pricing based on selected currency and cycle
+  const getCurrentPricing = () => {
+    const currencyPricing = hostingPlan.pricing.find(
+      p => p.currency.code === orderSummary.currency
+    )
+    return currencyPricing ? currencyPricing[orderSummary.cycle] : null
+  }
+
+  const currentPricing = getCurrentPricing()
+
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md overflow-hidden">
+    <form onSubmit={onOrderComplete} className="bg-white rounded-xl shadow-md overflow-hidden">
+      {/* Header */}
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-between items-start">
           <div>
@@ -41,6 +56,7 @@ export default function BillingForm({
         </div>
       </div>
       
+      {/* Main Content */}
       <div className="p-6 space-y-8">
         {/* Currency Selector */}
         <div>
@@ -52,7 +68,7 @@ export default function BillingForm({
                 type="button"
                 onClick={() => handleCurrencyChange(currencyOption.currency.code)}
                 className={`px-3 py-1.5 rounded-md text-sm font-medium ${
-                  selectedCurrency === currencyOption.currency.code 
+                  orderSummary.currency === currencyOption.currency.code 
                     ? 'bg-blue-600 text-white' 
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
@@ -63,15 +79,19 @@ export default function BillingForm({
           </div>
         </div>
         
-        {/* Choose Billing Cycle */}
+        {/* Billing Cycle */}
         <div>
           <h3 className="text-lg font-medium text-gray-800 mb-4">Choose Billing Cycle</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {['monthly', 'yearly', 'biennially'].map((cycle) => {
-              const currencyPricing = hostingPlan.pricing.find(p => p.currency.code === selectedCurrency)
+              const currencyPricing = hostingPlan.pricing.find(
+                p => p.currency.code === orderSummary.currency
+              )
               if (!currencyPricing) return null
               
               const cycleData = currencyPricing[cycle]
+              if (!cycleData) return null
+              
               const cycleTextMap = {
                 monthly: 'Monthly',
                 yearly: 'Yearly',
@@ -98,12 +118,12 @@ export default function BillingForm({
                     <div className="text-right">
                       <span className="font-bold">
                         {currencyPricing.currency.symbol}
-                        {parseFloat(cycleData.discount_price.replace(/[^\d.-]/g, '')).toFixed(2)}
+                        {cycleData.discount_price || cycleData.price}
                       </span>
-                      {cycleData.discount_price !== cycleData.price && (
+                      {cycleData.discount_price && cycleData.discount_price !== cycleData.price && (
                         <span className="block text-sm text-gray-500 line-through">
                           {currencyPricing.currency.symbol}
-                          {parseFloat(cycleData.price.replace(/[^\d.-]/g, '')).toFixed(2)}
+                          {cycleData.price}
                         </span>
                       )}
                     </div>
@@ -142,12 +162,17 @@ export default function BillingForm({
           </div>
         </div>
         
+        {/* Billing Details */}
         <BillingDetails formData={formData} handleInputChange={handleInputChange} />
+        
+        {/* Account Security */}
         <AccountSecurity 
           formData={formData} 
           handleInputChange={handleInputChange} 
           generatePassword={generatePassword} 
         />
+        
+        {/* Payment Method */}
         <PaymentMethod formData={formData} handleInputChange={handleInputChange} />
         
         {/* Terms and Conditions */}
@@ -159,6 +184,8 @@ export default function BillingForm({
                 id="terms"
                 name="terms"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                checked={formData.terms}
+                onChange={handleInputChange}
                 required
               />
             </div>
@@ -171,26 +198,41 @@ export default function BillingForm({
         </div>
       </div>
       
+      {/* Footer */}
       <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-between">
         <button
           type="button"
-          onClick={() => setStep(1)}
+          onClick={onBack}
           className="text-gray-600 hover:text-gray-800 font-medium flex items-center"
         >
           <ChevronRightIcon className="w-4 h-4 rotate-180 mr-1" /> Back
         </button>
         <button
           type="submit"
+          disabled={isSubmitting}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition flex items-center"
         >
-          <LockClosedIcon className="w-4 h-4 mr-2" /> Complete Order
+          {isSubmitting ? (
+            <ArrowPathIcon className="w-4 h-4 animate-spin mr-2" />
+          ) : (
+            <LockClosedIcon className="w-4 h-4 mr-2" />
+          )}
+          Complete Order
         </button>
-        {error && (
-          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            {error}
-          </div>
-        )}
       </div>
+      
+      {error && (
+        <div className="bg-red-50 border-l-4 border-red-400 p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   )
 }
