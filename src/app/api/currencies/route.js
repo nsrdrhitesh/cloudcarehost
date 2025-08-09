@@ -11,15 +11,13 @@ export async function GET() {
 
     const apiResult = await callWhmcsApi(apiConfig);
 
-    if (apiResult.result !== 'success') {
-      throw new Error(`WHMCS API returned error: ${apiResult.result}`);
-    }
+    console.log('Fetched currencies from WHMCS:', apiResult.currencies);
 
     // Transform the WHMCS response into desired UI format
     const transformedCurrencies = apiResult.currencies.currency.map(c => ({
       id: c.id,
       code: c.code,
-      name: getCurrencyName(c.code), // Helper to map full currency names
+      name: getCurrencyName(c.code),
       symbol: c.prefix || c.suffix || '',
     }));
 
@@ -30,9 +28,11 @@ export async function GET() {
 
   } catch (error) {
     console.error('Error fetching currencies:', error);
+
+    // If the error came from WHMCS and contains a response string, send that back
     return Response.json({
       success: false,
-      error: 'Failed to fetch currencies'
+      error: error.message || error.toString()
     }, { status: 500 });
   }
 }
@@ -44,7 +44,6 @@ function getCurrencyName(code) {
     EUR: 'Euro',
     AED: 'UAE Dirham',
     AUD: 'Australian Dollar'
-    // Add more as needed
   };
   return map[code] || code;
 }

@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'; // Add this line at the top of your file
 import PageHeader from '../components/PageHeader';
 import SearchBar from '../components/KnowledgeBase/SearchBar';
 import CategoryCard from '../components/KnowledgeBase/CategoryCard';

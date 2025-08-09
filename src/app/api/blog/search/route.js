@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { query } from '../../lib/queries';
+import { query } from '../../lib/db';
 import {queries} from '../../lib/queries';
 
 export async function GET(request) {
